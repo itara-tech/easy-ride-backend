@@ -1,167 +1,208 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+generator client {
+  provider = "prisma-client-js"
+}
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
-}
-
-model User {
-  id                 Int       @id @default(autoincrement())
-  name               String
-  email              String    @unique
-  passwordHash       String
-  phoneNumber        String?
-  role               Role      @default(rider)
-  currentLat         Float?
-  currentLon         Float?
-  lastLocationUpdate DateTime?
-  isActive           Boolean   @default(true)
-  vehicles           Vehicle[]
-  ridesRequested     Ride[]    @relation("RequestedRides")
-  ridesAccepted      Ride[]    @relation("AcceptedRides")
-  notifications      Notification[]
-  rideRequests       RideRequest[]
-  rideAccepts        RideAccept[]
-  rideCancels        RideCancel[]
-  rideCompletes      RideComplete[]
-}
-
-enum Role {
-  admin
-  rider
-  driver
-}
-
-model Vehicle {
-  id           Int    @id @default(autoincrement())
-  userId       Int
-  make         String
-  model        String
-  year         Int
-  licensePlate String
-  color        String
-  user         User   @relation(fields: [userId], references: [id])
-  type         VehicleType @default(car)
-}
-
-enum VehicleType {
-  car
-  bike
-  van
-  truck
-}
-
-model Ride {
-  id               Int         @id @default(autoincrement())
-  riderId          Int
-  driverId         Int?
-  pickupLocation   String
-  dropoffLocation  String
-  status           RideStatus  @default(requested)
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
-  rider            User        @relation("RequestedRides", fields: [riderId], references: [id])
-  driver           User?       @relation("AcceptedRides", fields: [driverId], references: [id])
-  payment          Payment?
-  rideRequests     RideRequest[]
-  rideAccepts      RideAccept[]
-  rideCancels      RideCancel[]
-  rideCompletes    RideComplete[]
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
 }
 
 enum RideStatus {
-  requested
-  accepted
-  completed
-  canceled
+  REQUESTED
+  ACCEPTED
+  COMPLETED
+  CANCELED
 }
 
-model Payment {
-  id        Int           @id @default(autoincrement())
-  rideId    Int           @unique
-  amount    Float
-  status    PaymentStatus @default(pending)
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-  ride      Ride          @relation(fields: [rideId], references: [id])
+enum VehicleType {
+  CAR
+  BIKE
+  VAN
+  TRUCK
 }
 
-enum PaymentStatus {
-  pending
-  success
-  failed
+enum UserType {
+  CUSTOMER
+  DRIVER
 }
 
-model Notification {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  message   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id])
+model Customer {
+  id             String           @id @default(uuid())
+  name           String
+  email          String           @unique
+  password       String
+  phone          String
+  isVerified     Boolean          @default(false)
+  createdAt      DateTime         @default(now())
+  rideRequests   RideRequest[]
+  trips          Trip[]
+  notifications  Notification[]
+  otps           OTP[]
+  passwordResets PasswordReset[]
+  ratings        CustomerRating[]
+
+  DriverRating DriverRating[]
+}
+
+model Driver {
+  id             String         @id @default(uuid())
+  name           String
+  email          String         @unique
+  password       String
+  phone          String
+  licenseNumber  String
+  isVerified     Boolean        @default(false)
+  currentLocation Json?         
+  isAvailable    Boolean        @default(true)
+  createdAt      DateTime       @default(now())
+  vehicles       Vehicle[]
+  rideAccepts    RideAccept[]
+  trips          Trip[]
+  notifications  Notification[]
+  otps           OTP[]
+  passwordResets PasswordReset[]
+  ratings        DriverRating[]
+
+  CustomerRating CustomerRating[]
+}
+
+model Vehicle {
+  id        String      @id @default(uuid())
+  driverId  String
+  driver    Driver      @relation(fields: [driverId], references: [id])
+  type      VehicleType
+  regNo     String      @unique
+  model     String
+  color     String
+  isActive  Boolean     @default(true)
+  createdAt DateTime    @default(now())
 }
 
 model RideRequest {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  rideId    Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id])
-  ride      Ride     @relation(fields: [rideId], references: [id])
+  id             String      @id @default(uuid())
+  customerId     String
+  customer       Customer    @relation(fields: [customerId], references: [id])
+  source         Json        
+  destination    Json        
+  estimatedPrice Float
+  createdAt      DateTime    @default(now())
+  rideAccept     RideAccept?
+  trip           Trip?
 }
 
 model RideAccept {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  rideId    Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id])
-  ride      Ride     @relation(fields: [rideId], references: [id])
+  id         String      @id @default(uuid())
+  requestId  String      @unique
+  request    RideRequest @relation(fields: [requestId], references: [id])
+  driverId   String
+  driver     Driver      @relation(fields: [driverId], references: [id])
+  acceptedAt DateTime    @default(now())
 }
 
-model RideCancel {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  rideId    Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id])
-  ride      Ride     @relation(fields: [rideId], references: [id])
+model Trip {
+  id             String          @id @default(uuid())
+  customerId     String
+  customer       Customer        @relation(fields: [customerId], references: [id])
+  driverId       String
+  driver         Driver          @relation(fields: [driverId], references: [id])
+  requestId      String          @unique
+  request        RideRequest     @relation(fields: [requestId], references: [id])
+  status         RideStatus
+  source         Json            
+  destination    Json            
+  paymentStatus  PaymentStatus
+  createdAt      DateTime        @default(now())
+  rideComplete   RideComplete?
+  rideCancel     RideCancel?
+  customerRating CustomerRating?
+  driverRating   DriverRating?
 }
 
 model RideComplete {
-  id        Int      @id @default(autoincrement())
-  userId    Int
-  rideId    Int
+  id           String   @id @default(uuid())
+  tripId       String   @unique
+  trip         Trip     @relation(fields: [tripId], references: [id])
+  finalAmount  Float
+  completedAt  DateTime @default(now())
+}
+
+model RideCancel {
+  id             String   @id @default(uuid())
+  tripId         String   @unique
+  trip           Trip     @relation(fields: [tripId], references: [id])
+  canceledByType UserType
+  canceledById   String
+  reason         String
+  canceledAt     DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userType  UserType
+  userId    String
+  customer  Customer? @relation(fields: [userId], references: [id], map: "Notification_customer_fkey")
+  driver    Driver?   @relation(fields: [userId], references: [id], map: "Notification_driver_fkey")
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id])
-  ride      Ride     @relation(fields: [rideId], references: [id])
 }
 
 model OTP {
-  id        Int      @id @default(autoincrement())
-  code      String
-  email     String
-  expiresAt DateTime
-  createdAt DateTime @default(now())
+  id         String   @id @default(uuid())
+  userType   UserType
+  userId     String
+  customer   Customer? @relation(fields: [userId], references: [id], map: "OTP_customer_fkey")
+  driver     Driver?   @relation(fields: [userId], references: [id], map: "OTP_driver_fkey")
+  code       String
+  isVerified Boolean  @default(false)
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
 }
 
 model PasswordReset {
-  id        Int      @id @default(autoincrement())
-  email     String
-  token     String   @unique
+  id        String   @id @default(uuid())
+  userType  UserType
+  userId    String
+  customer  Customer? @relation(fields: [userId], references: [id], map: "PasswordReset_customer_fkey")
+  driver    Driver?   @relation(fields: [userId], references: [id], map: "PasswordReset_driver_fkey")
+  token     String
+  isUsed    Boolean  @default(false)
   expiresAt DateTime
   createdAt DateTime @default(now())
 }
 
+model CustomerRating {
+  id         String   @id @default(uuid())
+  tripId     String   @unique
+  trip       Trip     @relation(fields: [tripId], references: [id])
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id])
+  driverId   String
+  driver     Driver   @relation(fields: [driverId], references: [id])
+  rating     Int
+  feedback   String?
+  createdAt  DateTime @default(now())
+}
+
+model DriverRating {
+  id         String   @id @default(uuid())
+  tripId     String   @unique
+  trip       Trip     @relation(fields: [tripId], references: [id])
+  driverId   String
+  driver     Driver   @relation(fields: [driverId], references: [id])
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id])
+  rating     Int
+  feedback   String?
+  createdAt  DateTime @default(now())
+}

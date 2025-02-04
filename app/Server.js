@@ -29,45 +29,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(passport.initialize())
 
 
-const swaggerOptions = {
-  definition: {
-    openapi: "3.0.0",
-    info: {
-      title: "Easy Ride Sharing API",
-      version: "1.0.0",
-      description: "API documentation for the Ride-Sharing application",
-      contact: {
-        name: "Dushime Don Aime",
-      },
-      license: {
-        name: "MIT",
-        url: "https://opensource.org/licenses/MIT",
-      },
-      version: "1.0.0",
-    },
-    servers: [
-      {
-        url: "http://localhost:3000",
-        description: "Development server",
-      },
-      {
-        url: "https://easy-ride-backend.vercel.app/",
-        description: "Production server",
-      },
-    ],
-  },
-  apis: ["./routes/authRoutes.js"],
 
-}
-
-const swaggerSpec = swaggerJsdoc(swaggerOptions)
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec))
-
-app.use("/", 
-    (req, res) => 
-    res.send("Welcome to the Ride-Sharing API")
-
-)
 
 
 
