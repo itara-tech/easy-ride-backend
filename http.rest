@@ -1,0 +1,260 @@
+@baseUrl = http://localhost:3000/api
+@authToken = 
+
+### Auth Routes ###
+
+# Register a new user
+
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "securepassword123"
+}
+
+###
+
+# Login
+
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "password": "securepassword123"
+}
+
+###
+
+# Forgot Password
+
+POST {{baseUrl}}/auth/forgot-password
+Content-Type: application/json
+
+{
+  "email": "john@example.com"
+}
+
+###
+
+# Reset Password
+
+POST {{baseUrl}}/auth/reset-password
+Content-Type: application/json
+
+{
+  "token": "reset_token_here",
+  "newPassword": "newSecurePassword123"
+}
+
+###
+
+# Send OTP
+
+POST {{baseUrl}}/auth/send-otp
+Content-Type: application/json
+
+{
+  "email": "john@example.com"
+}
+
+###
+
+# Verify OTP
+
+POST {{baseUrl}}/auth/verify-otp
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "otp": "123456"
+}
+
+### User Routes ###
+
+# Get User Profile
+
+GET {{baseUrl}}/users/profile
+Authorization: Bearer {{authToken}}
+
+###
+
+# Update User Profile
+PUT {{baseUrl}}/users/profile
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "name": "John Updated",
+  "phoneNumber": "+1234567890"
+}
+
+###
+
+# Update User Location
+PUT {{baseUrl}}/users/location
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "lat": 40.7128,
+  "lon": -74.0060
+}
+
+###
+
+# Get User Ride History
+GET {{baseUrl}}/users/ride-history
+Authorization: Bearer {{authToken}}
+
+###
+
+# Toggle User Active Status
+PUT {{baseUrl}}/users/toggle-active
+Authorization: Bearer {{authToken}}
+
+### Ride Routes ###
+
+# Create a new ride request
+POST {{baseUrl}}/rides
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "pickupLocation": "123 Main St, City",
+  "dropoffLocation": "456 Elm St, City"
+}
+
+###
+
+# Get a specific ride
+GET {{baseUrl}}/rides/1
+Authorization: Bearer {{authToken}}
+
+###
+
+# Update ride status
+PUT {{baseUrl}}/rides/1/status
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "status": "accepted"
+}
+
+###
+
+# Get nearby rides
+GET {{baseUrl}}/rides/nearby?lat=40.7128&lon=-74.0060&radius=5
+Authorization: Bearer {{authToken}}
+
+###
+
+# Get rider's active rides
+GET {{baseUrl}}/rides/rider/active
+Authorization: Bearer {{authToken}}
+
+###
+
+# Get driver's active rides
+GET {{baseUrl}}/rides/driver/active
+Authorization: Bearer {{authToken}}
+
+### Payment Routes ###
+
+# Create a payment
+POST {{baseUrl}}/payments
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "rideId": 1,
+  "amount": 15.50
+}
+
+###
+
+# Get payment status
+GET {{baseUrl}}/payments/1
+Authorization: Bearer {{authToken}}
+
+###
+
+# Update payment status
+PUT {{baseUrl}}/payments/1
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "status": "success"
+}
+
+### Notification Routes ###
+
+# Create a notification
+POST {{baseUrl}}/notifications
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "message": "Your ride has been accepted!"
+}
+
+###
+
+# Get user notifications
+GET {{baseUrl}}/notifications/user/1
+Authorization: Bearer {{authToken}}
+
+###
+
+# Mark notification as read
+PUT {{baseUrl}}/notifications/1/read
+Authorization: Bearer {{authToken}}
+
+### Vehicle Routes ###
+
+# Add a vehicle
+POST {{baseUrl}}/vehicles
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "make": "Toyota",
+  "model": "Camry",
+  "year": 2020,
+  "licensePlate": "ABC123",
+  "color": "Silver"
+}
+
+###
+
+# Get user's vehicles
+GET {{baseUrl}}/vehicles/user/1
+Authorization: Bearer {{authToken}}
+
+###
+
+# Update a vehicle
+PUT {{baseUrl}}/vehicles/1
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "make": "Honda",
+  "model": "Civic",
+  "year": 2021,
+  "licensePlate": "XYZ789",
+  "color": "Blue"
+}
+
+###
+
+# Delete a vehicle
+DELETE {{baseUrl}}/vehicles/1
+Authorization: Bearer {{authToken}}
+
