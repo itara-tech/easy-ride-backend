@@ -34,11 +34,11 @@ app.use(passport.initialize())
 
 
 app.use("/api/auth", authRoutes)
-app.use("/api/users", userRoutes)
-app.use("/api/rides", rideRoutes)
-app.use("/api/payments", paymentRoutes)
-app.use("/api/notifications", notificationRoutes)
-app.use("/api/vehicles", vehicleRoutes)
+// app.use("/api/users", userRoutes)
+// app.use("/api/rides", rideRoutes)
+// app.use("/api/payments", paymentRoutes)
+// app.use("/api/notifications", notificationRoutes)
+// app.use("/api/vehicles", vehicleRoutes)
 
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
