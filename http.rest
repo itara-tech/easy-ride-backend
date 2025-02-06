@@ -159,6 +159,47 @@ Authorization: Bearer {{driverToken}}
 PUT {{baseUrl}}/notifications/1/read
 Authorization: Bearer {{customerToken}}
 
+### OTP and Password Reset Routes ###
+
+### Send OTP
+POST {{baseUrl}}/auth/send-otp
+Content-Type: application/json
+
+{
+    "userId": "{{customerId}}",
+    "userType": "CUSTOMER",
+    "email": "user@example.com"
+}
+
+### Verify OTP
+POST {{baseUrl}}/auth/verify-otp
+Content-Type: application/json
+
+{
+    "email": "user@example.com",
+    "userType": "CUSTOMER",  // or "DRIVER"
+    "otp": "123456"
+}
+
+### Forgot Password
+POST {{baseUrl}}/auth/forgot-password
+Content-Type: application/json
+
+{
+    "email": "user@example.com",
+    "userType": "CUSTOMER"  // or "DRIVER"
+}
+
+### Reset Password
+POST {{baseUrl}}/auth/reset-password
+Content-Type: application/json
+
+{
+    "token": "reset-token-from-email",
+    "userType": "CUSTOMER",  // or "DRIVER"
+    "newPassword": "newpassword123"
+}
+
 ### Vehicle Routes ###
 
 ### Create a new vehicle

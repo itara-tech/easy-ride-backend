@@ -5,6 +5,7 @@ const prisma = new PrismaClient()
 
 // Middleware to authenticate JWT token
 export const authenticateToken = passport.authenticate("jwt", { session: false })
+export const authenticate = authenticateToken;
 
 // Middleware to check if user is a customer
 export const isCustomer = async (req, res, next) => {
