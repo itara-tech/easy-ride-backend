@@ -1,260 +1,201 @@
 @baseUrl = http://localhost:3000/api
 @authToken = 
+@customerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijk4NGRmMjA1LTExMGUtNGIxOC05NTk1LTMyNmVmMDI2YTk2NCIsInVzZXJUeXBlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3Mzg3NzcwNzMsImV4cCI6MTc0MTM2OTA3M30.ODQ3T3qUplamlu1PHuyiF3evFJlpJ-7yvqCgmSS8rqA
+@driverToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImZjMzFkYmEwLTZmOWUtNGIwYi04NDJhLTIxODk4ZGE3OTcxZiIsInVzZXJUeXBlIjoiRFJJVkVSIiwiaWF0IjoxNzM4Nzc3MTM2LCJleHAiOjE3NDEzNjkxMzZ9.Vq_FAmWL_1I2Y_WiIgRxkPoxpymL0QO2Wno4V-dZ2D4
+@customerId = 984df205-110e-4b18-9595-326ef026a964
+@driverId = fc31dba0-6f9e-4b0b-842a-21898da7971f
+@vehicleId = 
 
-### Auth Routes ###
 
-# Register a new user
-
-POST {{baseUrl}}/auth/register
+### Register Customer
+POST {{baseUrl}}/auth/customer/register HTTP/1.1
 Content-Type: application/json
 
 {
-  "name": "John Doe",
-  "email": "john@example.com",
-  "password": "securepassword123"
+    "name": "John Customer",
+    "email": "john.customer@example.com",
+    "password": "securepassword123",
+    "phone": "+1234567890"
 }
 
 ###
 
-# Login
-
-POST {{baseUrl}}/auth/login
+### Login Customer
+POST {{baseUrl}}/auth/customer/login HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "john@example.com",
-  "password": "securepassword123"
+    "email": "john.customer@example.com",
+    "password": "securepassword123"
 }
 
 ###
 
-# Forgot Password
-
-POST {{baseUrl}}/auth/forgot-password
+### Register Driver
+POST {{baseUrl}}/auth/driver/register HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "john@example.com"
+    "name": "John Driver",
+    "email": "john.driver@example.com",
+    "password": "securepassword123",
+    "phone": "+1234567890",
+    "licenseNumber": "DL123456"
 }
 
 ###
 
-# Reset Password
-
-POST {{baseUrl}}/auth/reset-password
+### Login Driver
+POST {{baseUrl}}/auth/driver/login HTTP/1.1
 Content-Type: application/json
 
 {
-  "token": "reset_token_here",
-  "newPassword": "newSecurePassword123"
+    "email": "john.driver@example.com",
+    "password": "securepassword123"
 }
 
-###
-
-# Send OTP
-
-POST {{baseUrl}}/auth/send-otp
-Content-Type: application/json
-
-{
-  "email": "john@example.com"
-}
-
-###
-
-# Verify OTP
-
-POST {{baseUrl}}/auth/verify-otp
-Content-Type: application/json
-
-{
-  "email": "john@example.com",
-  "otp": "123456"
-}
-
-### User Routes ###
-
-# Get User Profile
-
-GET {{baseUrl}}/users/profile
-Authorization: Bearer {{authToken}}
-
-###
-
-# Update User Profile
-PUT {{baseUrl}}/users/profile
-Authorization: Bearer {{authToken}}
-Content-Type: application/json
-
-{
-  "name": "John Updated",
-  "phoneNumber": "+1234567890"
-}
-
-###
-
-# Update User Location
-PUT {{baseUrl}}/users/location
-Authorization: Bearer {{authToken}}
-Content-Type: application/json
-
-{
-  "lat": 40.7128,
-  "lon": -74.0060
-}
-
-###
-
-# Get User Ride History
-GET {{baseUrl}}/users/ride-history
-Authorization: Bearer {{authToken}}
-
-###
-
-# Toggle User Active Status
-PUT {{baseUrl}}/users/toggle-active
-Authorization: Bearer {{authToken}}
-
-### Ride Routes ###
-
-# Create a new ride request
-POST {{baseUrl}}/rides
-Authorization: Bearer {{authToken}}
-Content-Type: application/json
-
-{
-  "pickupLocation": "123 Main St, City",
-  "dropoffLocation": "456 Elm St, City"
-}
-
-###
-
-# Get a specific ride
-GET {{baseUrl}}/rides/1
-Authorization: Bearer {{authToken}}
-
-###
-
-# Update ride status
-PUT {{baseUrl}}/rides/1/status
-Authorization: Bearer {{authToken}}
-Content-Type: application/json
-
-{
-  "status": "accepted"
-}
-
-###
-
-# Get nearby rides
-GET {{baseUrl}}/rides/nearby?lat=40.7128&lon=-74.0060&radius=5
-Authorization: Bearer {{authToken}}
-
-###
-
-# Get rider's active rides
-GET {{baseUrl}}/rides/rider/active
-Authorization: Bearer {{authToken}}
-
-###
-
-# Get driver's active rides
-GET {{baseUrl}}/rides/driver/active
-Authorization: Bearer {{authToken}}
-
-### Payment Routes ###
-
-# Create a payment
-POST {{baseUrl}}/payments
-Authorization: Bearer {{authToken}}
-Content-Type: application/json
-
-{
-  "rideId": 1,
-  "amount": 15.50
-}
-
-###
-
-# Get payment status
-GET {{baseUrl}}/payments/1
-Authorization: Bearer {{authToken}}
-
-###
-
-# Update payment status
-PUT {{baseUrl}}/payments/1
-Authorization: Bearer {{authToken}}
-Content-Type: application/json
-
-{
-  "status": "success"
-}
 
 ### Notification Routes ###
 
-# Create a notification
-POST {{baseUrl}}/notifications
+### Create a new notification
+POST {{baseUrl}}/notifications HTTP/1.1
 Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
-  "userId": 1,
-  "message": "Your ride has been accepted!"
+    "userId": "{{customerId}}",
+    "userType": "CUSTOMER",
+    "title": "New Ride Request",
+    "message": "You have a new ride request from downtown"
 }
 
 ###
 
-# Get user notifications
-GET {{baseUrl}}/notifications/user/1
+### Get user notifications
+GET {{baseUrl}}/notifications/user/{{customerId}} HTTP/1.1
+Authorization: Bearer {{customerToken}}
+
+###
+
+### Mark notification as read
+PUT {{baseUrl}}/notifications/NOTIFICATION_ID_HERE/read HTTP/1.1
 Authorization: Bearer {{authToken}}
 
 ###
 
-# Mark notification as read
-PUT {{baseUrl}}/notifications/1/read
-Authorization: Bearer {{authToken}}
-
-### Vehicle Routes ###
-
-# Add a vehicle
-POST {{baseUrl}}/vehicles
-Authorization: Bearer {{authToken}}
+### 1. Create notification (as Customer)
+POST {{baseUrl}}/notifications HTTP/1.1
+Authorization: Bearer {{customerToken}}
 Content-Type: application/json
 
 {
-  "userId": 1,
-  "make": "Toyota",
+    "userId": "{{customerId}}",
+    "userType": "CUSTOMER",
+    "title": "Ride Request",
+    "message": "Your ride has been requested"
+}
+
+###
+
+### 6. Get customer notifications
+GET {{baseUrl}}/notifications/user/{{customerId}} HTTP/1.1
+Authorization: Bearer {{customerToken}}
+
+###
+
+### 7. Create notification (as Driver)
+POST {{baseUrl}}/notifications HTTP/1.1
+Authorization: Bearer {{driverToken}}
+Content-Type: application/json
+
+{
+    "userId": "{{driverId}}",
+    "userType": "DRIVER",
+    "title": "New Ride Available",
+    "message": "There's a new ride request in your area"
+}
+
+###
+
+### 8. Get driver notifications
+GET {{baseUrl}}/notifications/user/{{driverId}} HTTP/1.1
+Authorization: Bearer {{driverToken}}
+
+### Test Notification API ###
+
+### 1. Create Customer Notification
+POST {{baseUrl}}/notifications
+Authorization: Bearer {{customerToken}}
+Content-Type: application/json
+
+{
+    "userId": "{{customerId}}",
+    "userType": "CUSTOMER",
+    "title": "Test Customer Notification",
+    "message": "This is a test notification for customer"
+}
+
+### 2. Create Driver Notification
+POST {{baseUrl}}/notifications
+Authorization: Bearer {{driverToken}}
+Content-Type: application/json
+
+{
+    "userId": "{{driverId}}",
+    "userType": "DRIVER",
+    "title": "Test Driver Notification",
+    "message": "This is a test notification for driver"
+}
+
+### 3. Get Customer Notifications
+GET {{baseUrl}}/notifications/user/{{customerId}}
+Authorization: Bearer {{customerToken}}
+
+### 4. Get Driver Notifications
+GET {{baseUrl}}/notifications/user/{{driverId}}
+Authorization: Bearer {{driverToken}}
+
+### 5. Mark notification as read (replace NOTIFICATION_ID with an actual ID)
+PUT {{baseUrl}}/notifications/1/read
+Authorization: Bearer {{customerToken}}
+
+### Vehicle Routes ###
+
+### Create a new vehicle
+POST {{baseUrl}}/vehicles
+Authorization: Bearer {{driverToken}}
+Content-Type: application/json
+
+{
+  "driverId": "{{driverId}}",
+  "type": "CAR",
+  "regNo": "ABC123",
   "model": "Camry",
-  "year": 2020,
-  "licensePlate": "ABC123",
   "color": "Silver"
 }
 
 ###
 
-# Get user's vehicles
-GET {{baseUrl}}/vehicles/user/1
-Authorization: Bearer {{authToken}}
+### Get all vehicles for a specific driver
+GET {{baseUrl}}/vehicles/driver/{{driverId}}
+Authorization: Bearer {{driverToken}}
 
 ###
 
-# Update a vehicle
-PUT {{baseUrl}}/vehicles/1
-Authorization: Bearer {{authToken}}
+### Update a vehicle
+PUT {{baseUrl}}/vehicles/{{vehicleId}}
+Authorization: Bearer {{driverToken}}
 Content-Type: application/json
 
 {
-  "make": "Honda",
-  "model": "Civic",
-  "year": 2021,
-  "licensePlate": "XYZ789",
-  "color": "Blue"
+  "type": "CAR",
+  "model": "Camry",
+  "color": "Black",
+  "isActive": true
 }
 
 ###
 
-# Delete a vehicle
-DELETE {{baseUrl}}/vehicles/1
-Authorization: Bearer {{authToken}}
-
+### Delete a vehicle
+DELETE {{baseUrl}}/vehicles/{{vehicleId}}
+Authorization: Bearer {{driverToken}}
