@@ -6,6 +6,19 @@ import nodemailer from "nodemailer"
 
 const prisma = new PrismaClient()
 
+const transporter = nodemailer.createTransport({
+    host: 'live.smtp.mailtrap.io',
+    port: 587,
+    auth: {
+        user: 'apismtp@mailtrap.io',
+        pass: '********a928', // replace with your actual password
+    },
+    secure: false,
+    tls: {
+        rejectUnauthorized: false
+    }
+});
+
 // Helper function to generate JWT token
 const generateToken = (id, userType) => {
     return jwt.sign({ id, userType }, process.env.JWT_SECRET, {
@@ -20,26 +33,20 @@ const generateOTP = () => {
 
 // Helper function to send email
 const sendEmail = async (to, subject, text) => {
+    const mailOptions = {
+        from: 'apismtp@mailtrap.io', 
+        to,
+        subject,
+        text,
+    };
+
     try {
-        const transporter = nodemailer.createTransport({
-            service: process.env.EMAIL_SERVICE || 'gmail',
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASSWORD
-            }
-        })
-
-        await transporter.sendMail({
-            from: process.env.EMAIL_USER,
-            to,
-            subject,
-            text
-        })
-
-        return true
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Email sent:', info.response);
+        return true;
     } catch (error) {
-        console.error('Email sending error:', error)
-        return false
+        console.error('Error sending email:', error);
+        return false;
     }
 }
 
