@@ -1,0 +1,67 @@
+@baseUrl = http://localhost:3000/api
+@customerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImJkNDczMjY2LWFmYmQtNDBhMy1hZWYyLWQ2MDM4OTEyNjQ5MiIsInVzZXJUeXBlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3Mzk0Nzk3MTEsImV4cCI6MTc0MjA3MTcxMX0.ui4Mq5GPvOLBCN52pnJWO2QMu1PJBYcgurMm0YIVOW4
+@driverToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJhNmQzMDE4LTcxNTgtNDFhMS1hNGVmLTZiNzhlMmE4MmVhZSIsInVzZXJUeXBlIjoiRFJJVkVSIiwiaWF0IjoxNzM5NDc5NzQ3LCJleHAiOjE3NDIwNzE3NDd9.TuH31MQRz7cz2eOXVN836WCeXh-Yi_uUmPbbIttvWO4
+@customerId = bd473266-afbd-40a3-aef2-d60389126492
+@driverId = 2a6d3018-7158-41a1-a4ef-6b78e2a82eae
+@vehicleId = e29be8f6-8a02-48f8-a9b9-ac5e6fb31ce6
+
+@rideId = c06f60dc-3b90-43b2-9b03-9e07ab63fca4
+
+@tripId = e01a58cb-d501-4a0a-a01a-05a60b876269
+
+### Ride Routes ###
+
+### Create Ride Request
+POST {{baseUrl}}/rides/request
+Content-Type: application/json
+Authorization: Bearer {{customerToken}}
+
+{
+    "customerId": "{{customerId}}",
+    "pickupLocation": {
+        "lat": -1.9403,
+        "lon": 30.0619,
+        "address": "123 Main "
+    },
+    "dropoffLocation": {
+        "lat": -1.9503,
+        "lon": 30.0719,
+        "address": "456 Elm St"
+    }
+}
+
+### Accept Ride
+PUT {{baseUrl}}/rides/accept
+Content-Type: application/json
+Authorization: Bearer {{driverToken}}
+
+{
+  "rideId": "{{rideId}}",
+  "driverId": "{{driverId}}"
+}
+
+### Complete Ride
+PUT {{baseUrl}}/rides/complete
+Content-Type: application/json
+Authorization: Bearer {{driverToken}}
+
+{
+  "rideId": "{{rideId}}",
+  "finalAmount": 20.00 
+}
+
+### Cancel Ride
+PUT {{baseUrl}}/rides/cancel
+Content-Type: application/json
+Authorization: Bearer {{customerToken}}
+
+{
+  "tripId":"{{tripId}}",
+  "canceledByType": "CUSTOMER",
+  "canceledById": "{{customerId}}",
+  "reason": "Customer changed their plans"
+}
+
+### Get Nearby Rides
+GET {{baseUrl}}/rides/nearby?lat=-1.9403&lon=30.0619&radius=40
+Authorization: Bearer {{driverToken}}

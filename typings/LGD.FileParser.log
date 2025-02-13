@@ -1,7 +1,2 @@
 Stop logging by changing setting "lgd.options.createDebugLog"
 If you have any problems or requests please create an issue on Github.
-
-c:\Users\dushi\OneDrive\Desktop\backend\easy-ride-backend-setup(prisma, express)\app\Server.js: 
-
-ERROR: Error occurred parsing value using "any" instead. err: SyntaxError: Unexpected token ']'
-ERROR: Error occurred parsing value using "any" instead. err: SyntaxError: Unexpected token ']'

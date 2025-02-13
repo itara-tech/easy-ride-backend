@@ -1,0 +1,112 @@
+@baseUrl = http://localhost:3000/api
+@authToken = 
+@customerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNkNDQ3Mjg4LTMxODQtNGY3ZS04NDZjLTk3ZDJlNDc5YWEyNiIsInVzZXJUeXBlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3MzkzMjAzMTcsImV4cCI6MTc0MTkxMjMxN30.BDS8XcSfkeFzYUFJykNbdLdE3dDhMy1EcfzXp8ZG6bw
+@driverToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI2ZTQyYzI1LTk3NjgtNDRkMC05YjY3LTZlMWQ2ZjJlMTFkZCIsInVzZXJUeXBlIjoiRFJJVkVSIiwiaWF0IjoxNzM5MzIwMjM3LCJleHAiOjE3NDE5MTIyMzd9.uvM3TacjZxkdSzfbxd0UU-21kC_xcQe3T559PIuLb6Y
+@customerId = cd447288-3184-4f7e-846c-97d2e479aa26
+@driverId = 26e42c25-9768-44d0-9b67-6e1d6f2e11dd
+@vehicleId = b65f06a3-ea66-43ae-a2b4-33a8180ebd5b
+
+@rideId = d6edfcd4-849a-4f9d-9bfb-d5051d9a12b1
+
+
+### Create a new notification
+POST {{baseUrl}}/notifications HTTP/1.1
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "userId": "{{customerId}}",
+    "userType": "CUSTOMER",
+    "title": "New Ride Request",
+    "message": "You have a new ride request from downtown"
+}
+
+###
+
+### Get user notifications
+GET {{baseUrl}}/notifications/user/{{customerId}} HTTP/1.1
+Authorization: Bearer {{customerToken}}
+
+###
+
+### Mark notification as read
+PUT {{baseUrl}}/notifications/NOTIFICATION_ID_HERE/read HTTP/1.1
+Authorization: Bearer {{authToken}}
+
+###
+
+### 1. Create notification (as Customer)
+POST {{baseUrl}}/notifications HTTP/1.1
+Authorization: Bearer {{customerToken}}
+Content-Type: application/json
+
+{
+    "userId": "{{customerId}}",
+    "userType": "CUSTOMER",
+    "title": "Ride Request",
+    "message": "Your ride has been requested"
+}
+
+###
+
+### 6. Get customer notifications
+GET {{baseUrl}}/notifications/user/{{customerId}} HTTP/1.1
+Authorization: Bearer {{customerToken}}
+
+###
+
+### 7. Create notification (as Driver)
+POST {{baseUrl}}/notifications HTTP/1.1
+Authorization: Bearer {{driverToken}}
+Content-Type: application/json
+
+{
+    "userId": "{{driverId}}",
+    "userType": "DRIVER",
+    "title": "New Ride Available",
+    "message": "There's a new ride request in your area"
+}
+
+###
+
+### 8. Get driver notifications
+GET {{baseUrl}}/notifications/user/{{driverId}} HTTP/1.1
+Authorization: Bearer {{driverToken}}
+
+### Test Notification API ###
+
+### 1. Create Customer Notification
+POST {{baseUrl}}/notifications
+Authorization: Bearer {{customerToken}}
+Content-Type: application/json
+
+{
+    "userId": "{{customerId}}",
+    "userType": "CUSTOMER",
+    "title": "Test Customer Notification",
+    "message": "This is a test notification for customer"
+}
+
+### 2. Create Driver Notification
+POST {{baseUrl}}/notifications
+Authorization: Bearer {{driverToken}}
+Content-Type: application/json
+
+{
+    "userId": "{{driverId}}",
+    "userType": "DRIVER",
+    "title": "Test Driver Notification",
+    "message": "This is a test notification for driver"
+}
+
+### 3. Get Customer Notifications
+GET {{baseUrl}}/notifications/user/{{customerId}}
+Authorization: Bearer {{customerToken}}
+
+### 4. Get Driver Notifications
+GET {{baseUrl}}/notifications/user/{{driverId}}
+Authorization: Bearer {{driverToken}}
+
+### 5. Mark notification as read (replace NOTIFICATION_ID with an actual ID)
+PUT {{baseUrl}}/notifications/1/read
+Authorization: Bearer {{customerToken}}

@@ -12,19 +12,19 @@ import {
 
 const router = express.Router()
 
-// Customer routes
+// Customer 
 router.post("/customer/register", registerCustomer)
 router.post("/customer/login", loginCustomer)
 
-// Driver routes
+// Driver 
 router.post("/driver/register", registerDriver)
 router.post("/driver/login", loginDriver)
 
-// OTP verification routes
+// OTP  
 router.post("/send-otp", sendOTP)
 router.post("/verify-otp", verifyOTP)
 
-// Password reset routes
+// Password reset
 router.post("/forgot-password", forgotPassword)
 router.post("/reset-password", resetPassword)
 

@@ -1,0 +1,78 @@
+@baseUrl = http://localhost:3000/api
+@authToken = 
+@customerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNkNDQ3Mjg4LTMxODQtNGY3ZS04NDZjLTk3ZDJlNDc5YWEyNiIsInVzZXJUeXBlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3MzkzMjAzMTcsImV4cCI6MTc0MTkxMjMxN30.BDS8XcSfkeFzYUFJykNbdLdE3dDhMy1EcfzXp8ZG6bw
+@driverToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI2ZTQyYzI1LTk3NjgtNDRkMC05YjY3LTZlMWQ2ZjJlMTFkZCIsInVzZXJUeXBlIjoiRFJJVkVSIiwiaWF0IjoxNzM5MzgzODA5LCJleHAiOjE3NDE5NzU4MDl9.vqRh3M9B-TrwyRcTvbagcKPo4N67DojUS8n6L_jUxD8
+@customerId = cd447288-3184-4f7e-846c-97d2e479aa26
+@driverId = 26e42c25-9768-44d0-9b67-6e1d6f2e11dd
+@vehicleId = b65f06a3-ea66-43ae-a2b4-33a8180ebd5b
+
+@rideId = d6edfcd4-849a-4f9d-9bfb-d5051d9a12b1
+
+### Register Customer
+POST {{baseUrl}}/auth/customer/register HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "John Customer",
+    "email": "john.customer@example.com",
+    "password": "securepassword123",
+    "phone": "+1234567890"
+}
+
+###
+
+### Login Customer
+POST {{baseUrl}}/auth/customer/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "email": "john.customer@example.com",
+    "password": "securepassword123"
+}
+
+###
+
+### Register Driver
+POST {{baseUrl}}/auth/driver/register HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "John Driver",
+    "email": "john.driver@example.com",
+    "password": "securepassword123",
+    "phone": "+1234567890",
+    "licenseNumber": "DL123456"
+}
+
+###
+
+### Login Driver
+POST {{baseUrl}}/auth/driver/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "email": "john.driver@example.com",
+    "password": "securepassword123"
+}
+
+
+
+### Send OTP
+POST {{baseUrl}}/auth/send-otp
+Content-Type: application/json
+
+{
+    "userId": "{{customerId}}",
+    "userType": "CUSTOMER",
+    "email": "user@example.com"
+}
+
+### Verify OTP
+POST {{baseUrl}}/auth/verify-otp
+Content-Type: application/json
+
+{
+    "email": "user@example.com",
+    "userType": "CUSTOMER",  // or "DRIVER"
+    "otp": "123456"
+}

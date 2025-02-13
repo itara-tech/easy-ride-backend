@@ -3,11 +3,11 @@ import { PrismaClient } from "@prisma/client"
 
 const prisma = new PrismaClient()
 
-// Middleware to authenticate JWT token
+// to authenticate JWT token
 export const authenticateToken = passport.authenticate("jwt", { session: false })
 export const authenticate = authenticateToken;
 
-// Middleware to check if user is a customer
+// to check if user is a customer
 export const isCustomer = async (req, res, next) => {
     try {
         if (req.user.userType !== "CUSTOMER") {
@@ -19,7 +19,7 @@ export const isCustomer = async (req, res, next) => {
     }
 }
 
-// Middleware to check if user is a driver
+// to check if user is a driver
 export const isDriver = async (req, res, next) => {
     try {
         if (req.user.userType !== "DRIVER") {
@@ -31,7 +31,7 @@ export const isDriver = async (req, res, next) => {
     }
 }
 
-// Middleware to check if user owns the resource
+// to check if user owns the resource
 export const isResourceOwner = async (req, res, next) => {
     try {
         const { userId } = req.params

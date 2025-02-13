@@ -8,18 +8,19 @@ import swaggerJsdoc from "swagger-jsdoc"
 import dotenv from "dotenv"
 
 import authRoutes from "./routes/authRoutes.js"
-// import userRoutes from "./routes/userRoutes.js"
-// import rideRoutes from "./routes/rideRoutes.js"
-// import paymentRoutes from "./routes/paymentRoutes.js"
+import userRoutes from "./routes/userRoutes.js"
+import rideRoutes from "./routes/rideRoutes.js"
+import paymentRoutes from "./routes/paymentRoutes.js"
 import notificationRoutes from "./routes/notificationRoutes.js"
 import vehicleRoutes from "./routes/vehicleRoutes.js"
 
 import "./configs/passport.js"
+import { PrismaClient } from "@prisma/client"
 
 dotenv.config()
 
 const app = express()
-
+export const prisma = new PrismaClient()
 
 app.use(cors())
 app.use(helmet())
@@ -28,17 +29,12 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(passport.initialize())
 
-
-
-
-
-
+app.use("/api/users", userRoutes)
 app.use("/api/auth", authRoutes)
-// app.use("/api/users", userRoutes)
-// app.use("/api/rides", rideRoutes)
+// app.use("/api/notifications", notificationRoutes)
 // app.use("/api/payments", paymentRoutes)
-app.use("/api/notifications", notificationRoutes)
 app.use("/api/vehicles", vehicleRoutes)
+app.use("/api/rides", rideRoutes)
 
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
@@ -47,6 +43,4 @@ Server is running on port ${PORT}
 Open http://localhost:${PORT}/api-docs to view the API documentation
 Open http://localhost:${PORT}/ to view the API
     `)
-})
-
-export default app
+});

@@ -1,0 +1,48 @@
+@baseUrl = http://localhost:3000/api
+@customerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImJkNDczMjY2LWFmYmQtNDBhMy1hZWYyLWQ2MDM4OTEyNjQ5MiIsInVzZXJUeXBlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3Mzk0Nzk3MTEsImV4cCI6MTc0MjA3MTcxMX0.ui4Mq5GPvOLBCN52pnJWO2QMu1PJBYcgurMm0YIVOW4
+@driverToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJhNmQzMDE4LTcxNTgtNDFhMS1hNGVmLTZiNzhlMmE4MmVhZSIsInVzZXJUeXBlIjoiRFJJVkVSIiwiaWF0IjoxNzM5NDc5NzQ3LCJleHAiOjE3NDIwNzE3NDd9.TuH31MQRz7cz2eOXVN836WCeXh-Yi_uUmPbbIttvWO4
+@customerId = bd473266-afbd-40a3-aef2-d60389126492
+@driverId = 2a6d3018-7158-41a1-a4ef-6b78e2a82eae
+@vehicleId = e29be8f6-8a02-48f8-a9b9-ac5e6fb31ce6
+
+### Vehicle Routes ###
+
+### Create a new vehicle
+POST {{baseUrl}}/vehicles
+Authorization: Bearer {{driverToken}}
+Content-Type: application/json
+
+{
+  "driverId": "{{driverId}}",
+  "type": "BIKE",
+  "regNo": "ABC1923",
+  "model": "Camry",
+  "color": "Gold"
+}
+
+###
+
+### Get all vehicles for a specific driver
+GET {{baseUrl}}/vehicles/driver/{{driverId}}
+Authorization: Bearer {{driverToken}}
+
+###
+
+### Update a vehicle
+PUT {{baseUrl}}/vehicles/{{vehicleId}}
+Authorization: Bearer {{driverToken}}
+Content-Type: application/json
+
+{
+  "type": "CAR",
+  "model": "Camry",
+  "color": "Black",
+  "isActive": true
+}
+
+###
+
+### Delete a vehicle
+DELETE {{baseUrl}}/vehicles/{{vehicleId}}
+Authorization: Bearer {{driverToken}}
+
