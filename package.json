@@ -9,7 +9,10 @@
   "scripts": {
     "test": "test",
     "start": "nodemon app/Server.js",
-    "dev": "nodemon app/Server.js"
+    "dev": "nodemon app/Server.js",
+    "generate": "prisma generate",
+    "migrate": "npx prisma migrate dev",
+    "seed": "npx prisma db seed"
   },
   "dependencies": {
     "@prisma/client": "^6.3.0",
