@@ -36,6 +36,10 @@ app.use("/api/auth", authRoutes)
 app.use("/api/vehicles", vehicleRoutes)
 app.use("/api/rides", rideRoutes)
 
+app.get("/", (req, res) => {
+  res.send("Welcome to the API")
+})
+
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
   console.log(`
