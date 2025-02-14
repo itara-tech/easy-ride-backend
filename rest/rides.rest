@@ -1,13 +1,16 @@
 @baseUrl = http://localhost:3000/api
-@customerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImJkNDczMjY2LWFmYmQtNDBhMy1hZWYyLWQ2MDM4OTEyNjQ5MiIsInVzZXJUeXBlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3Mzk0Nzk3MTEsImV4cCI6MTc0MjA3MTcxMX0.ui4Mq5GPvOLBCN52pnJWO2QMu1PJBYcgurMm0YIVOW4
-@driverToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJhNmQzMDE4LTcxNTgtNDFhMS1hNGVmLTZiNzhlMmE4MmVhZSIsInVzZXJUeXBlIjoiRFJJVkVSIiwiaWF0IjoxNzM5NDc5NzQ3LCJleHAiOjE3NDIwNzE3NDd9.TuH31MQRz7cz2eOXVN836WCeXh-Yi_uUmPbbIttvWO4
-@customerId = bd473266-afbd-40a3-aef2-d60389126492
-@driverId = 2a6d3018-7158-41a1-a4ef-6b78e2a82eae
-@vehicleId = e29be8f6-8a02-48f8-a9b9-ac5e6fb31ce6
+@customerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQxZWMyMTFhLWUwMzktNGZhZi05OTFkLTY2N2RlZTA1MGQzNSIsInVzZXJUeXBlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3Mzk1MTc3NzEsImV4cCI6MTc0MjEwOTc3MX0.a3JyMcbOdg1TBAivhVJFO9P8yFt8z_QRpMKEUHPNudw
+@driverToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4YWU5ODM3LTFkMGYtNDAyNC1iMzczLWJjYTNjYTY0NzZhZSIsInVzZXJUeXBlIjoiRFJJVkVSIiwiaWF0IjoxNzM5NTE3Nzk5LCJleHAiOjE3NDIxMDk3OTl9.23rYk_ry_e_WIKhwSy4QW496sDJB_5wYe2Q_24iAfDQ
 
-@rideId = c06f60dc-3b90-43b2-9b03-9e07ab63fca4
+@customerId = 41ec211a-e039-4faf-991d-667dee050d35
 
-@tripId = e01a58cb-d501-4a0a-a01a-05a60b876269
+@driverId = 38ae9837-1d0f-4024-b373-bca3ca6476ae
+
+@vehicleId = 05aef665-4ebb-4c7b-8cf9-e30bae05f0ee
+
+@rideId = f5130baa-d7f9-43f0-8fbb-05ed756ae4b4
+
+@tripId = bc8f4c4f-2d89-4805-a1ce-8a9228756746
 
 ### Ride Routes ###
 
@@ -47,7 +50,7 @@ Authorization: Bearer {{driverToken}}
 
 {
   "rideId": "{{rideId}}",
-  "finalAmount": 20.00 
+  "finalAmount": 200.00 
 }
 
 ### Cancel Ride
