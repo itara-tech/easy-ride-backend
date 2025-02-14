@@ -101,27 +101,38 @@ export const acceptRide = async (rideRequestId, driverId) => {
   }
 }
 
-export const completeRide = async (tripId, finalAmount) => {
+export const completeRide = async (rideId, finalAmount) => {
   if (!prisma) {
     throw new Error('Prisma client not initialized');
   }
+  
+
+  
 
   try {
+    const existingTrip = await prisma.trip.findFirst({
+      where: { requestId: rideId },
+    })
+  
+    if (!existingTrip) {
+      throw new Error("Trip not found. Unable to complete ride.")
+    }
+    
     const rideComplete = await prisma.rideComplete.create({
       data: {
-        tripId,
+        tripId: existingTrip.id,
         finalAmount,
         completedAt: new Date(),
       },
     });
 
     // Update the trip status to completed
-    const trip = await prisma.trip.update({
-      where: { id: tripId },
+    const updatedTrip = await prisma.trip.update({
+      where: { id: existingTrip.id },
       data: { status: "COMPLETED" },
     });
 
-    return { rideComplete, trip };
+    return { rideComplete, updatedTrip };
   } catch (error) {
     console.error('Error completing ride:', error);
     throw error;
