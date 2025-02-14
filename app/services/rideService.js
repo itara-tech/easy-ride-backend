@@ -105,7 +105,7 @@ export const completeRide = async (rideId, finalAmount) => {
   if (!prisma) {
     throw new Error('Prisma client not initialized');
   }
-  
+  console.log(`Attempting to complete ride with rideId: ${rideId}`)
 
   
 
@@ -116,6 +116,10 @@ export const completeRide = async (rideId, finalAmount) => {
   
     if (!existingTrip) {
       throw new Error("Trip not found. Unable to complete ride.")
+    }
+
+    if (existingTrip.status === "COMPLETED") {
+      return { message: "Ride is already completed", existingTrip }
     }
     
     const rideComplete = await prisma.rideComplete.create({
@@ -152,6 +156,16 @@ export const cancelRide = async (tripId, canceledByType, canceledById, reason) =
 
     if (!trip) {
       throw new Error('Trip not found');
+    }
+
+    const cancedRide = await prisma.rideCancel.findFirst({
+      where: {
+        tripId,
+      }
+    })
+
+    if(cancedRide){
+      return { message: "Ride is already canceled", trip }
     }
 
     
