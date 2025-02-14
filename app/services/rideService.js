@@ -32,7 +32,7 @@ export const createRideRequest = async (customerId, source, destination) => {
 
     // pricing calculation 
     const baseRate = 5.0; // starting fare
-    const ratePerKm = 700 ; // per kilometer
+    const ratePerKm = 700; // per kilometer
     const estimatedPrice = Math.max(baseRate, baseRate + distance * ratePerKm);
 
     return await prisma.rideRequest.create({
@@ -77,7 +77,7 @@ export const acceptRide = async (rideRequestId, driverId) => {
       }
     });
 
-    
+
     const rideRequest = await prisma.rideRequest.findUnique({
       where: { id: rideRequestId },
     });
@@ -107,13 +107,13 @@ export const completeRide = async (rideId, finalAmount) => {
   }
   console.log(`Attempting to complete ride with rideId: ${rideId}`)
 
-  
+
 
   try {
     const existingTrip = await prisma.trip.findFirst({
       where: { requestId: rideId },
     })
-  
+
     if (!existingTrip) {
       throw new Error("Trip not found. Unable to complete ride.")
     }
@@ -121,7 +121,7 @@ export const completeRide = async (rideId, finalAmount) => {
     if (existingTrip.status === "COMPLETED") {
       return { message: "Ride is already completed", existingTrip }
     }
-    
+
     const rideComplete = await prisma.rideComplete.create({
       data: {
         tripId: existingTrip.id,
@@ -164,11 +164,11 @@ export const cancelRide = async (tripId, canceledByType, canceledById, reason) =
       }
     })
 
-    if(cancedRide){
+    if (cancedRide) {
       return { message: "Ride is already canceled", trip }
     }
 
-    
+
     return await prisma.rideCancel.create({
       data: {
         tripId,
@@ -190,6 +190,8 @@ export const getNearbyRides = async (lat, lon, radius) => {
     throw new Error('Prisma client not initialized');
   }
 
+  console.log(`Searching for rides near (${lat}, ${lon}) within ${radius} km`)
+
   try {
     const rides = await prisma.rideRequest.findMany({
       where: {
@@ -198,22 +200,39 @@ export const getNearbyRides = async (lat, lon, radius) => {
       include: {
         customer: true,
       },
-    });
+    })
 
-    return rides.filter((ride) => {
-      
-      if (!ride.customer || !ride.customer.currentLocation || !ride.customer.currentLocation.lat || !ride.customer.currentLocation.lon) {
-        return false;
+    console.log(`Found ${rides.length} total ride requests`)
+
+    if (rides.length === 0) {
+      console.log("No ride requests found in the database")
+      return []
+    }
+
+    const nearbyRides = rides.filter((ride) => {
+      if (!ride.customer || !ride.customer.currentLocation) {
+        console.log(`Ride ${ride.id} skipped: Customer or currentLocation not available`)
+        return false
       }
 
-      const distance = calculateDistance(
-        lat, 
-        lon, 
-        ride.customer.currentLocation.lat, 
-        ride.customer.currentLocation.lon
-      );
-      return distance <= radius;
-    });
+      const customerLat = Number.parseFloat(ride.customer.currentLocation.lat)
+      const customerLon = Number.parseFloat(ride.customer.currentLocation.lon)
+
+      if (isNaN(customerLat) || isNaN(customerLon)) {
+        console.log(
+          `Ride ${ride.id} skipped: Invalid customer location (${ride.customer.currentLocation.lat}, ${ride.customer.currentLocation.lon})`,
+        )
+        return false
+      }
+
+      const distance = calculateDistance(lat, lon, customerLat, customerLon)
+      console.log(`Ride ${ride.id} distance: ${distance} km`)
+
+      return distance <= radius
+    })
+
+    console.log(`Found ${nearbyRides.length} nearby rides`)
+    return nearbyRides
   } catch (error) {
     console.error('Error getting nearby rides:', error);
     throw error;
