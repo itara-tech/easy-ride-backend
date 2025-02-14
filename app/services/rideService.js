@@ -30,9 +30,9 @@ export const createRideRequest = async (customerId, source, destination) => {
       throw new Error("Unable to calculate ride distance");
     }
 
-    // Basic pricing calculation (adjust as needed)
-    const baseRate = 5.0; // Base starting fare
-    const ratePerKm = 2.5; // Rate per kilometer
+    // pricing calculation 
+    const baseRate = 5.0; // starting fare
+    const ratePerKm = 700 ; // per kilometer
     const estimatedPrice = Math.max(baseRate, baseRate + distance * ratePerKm);
 
     return await prisma.rideRequest.create({
@@ -134,7 +134,7 @@ export const cancelRide = async (tripId, canceledByType, canceledById, reason) =
   }
 
   try {
-    //to  Ensure the trip exists
+    //Ensure the trip exists
     const trip = await prisma.trip.findUnique({
       where: { id: tripId },
     });
@@ -196,7 +196,7 @@ export const getNearbyRides = async (lat, lon, radius) => {
 }
 
 function calculateDistance(lat1, lon1, lat2, lon2) {
-  const R = 6371; // Radius of the earth in km
+  const R = 6371;
   const dLat = (lat2 - lat1) * (Math.PI / 180);
   const dLon = (lon2 - lon1) * (Math.PI / 180);
 
