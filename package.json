@@ -10,8 +10,9 @@
     "test": "test",
     "start": "nodemon app/Server.js",
     "dev": "nodemon app/Server.js",
-    "generate": "prisma generate",
+    "build": "npm run generate",
     "migrate": "npx prisma migrate dev",
+    "deploy": "npx prisma migrate deploy",
     "seed": "npx prisma db seed"
   },
   "dependencies": {
