@@ -1,0 +1,57 @@
+@baseUrl = http://localhost:3000/api
+@customerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQxZWMyMTFhLWUwMzktNGZhZi05OTFkLTY2N2RlZTA1MGQzNSIsInVzZXJUeXBlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3Mzk2MDkxNTgsImV4cCI6MTc0MjIwMTE1OH0.cjAhI1vlyLXkWz4I3klFTxKpWr_oo062fBw3-zlgg8Y
+@driverToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4YWU5ODM3LTFkMGYtNDAyNC1iMzczLWJjYTNjYTY0NzZhZSIsInVzZXJUeXBlIjoiRFJJVkVSIiwiaWF0IjoxNzM5NjA5MTgxLCJleHAiOjE3NDIyMDExODF9.IYzqaxAlbWs5zXyoqxYGAZGBc1Mz7rpfqJqFW7gsZEQ
+
+@customerId = 41ec211a-e039-4faf-991d-667dee050d35
+
+@driverId = 38ae9837-1d0f-4024-b373-bca3ca6476ae
+
+### User Routes ###
+
+### Get Customer Profile
+GET {{baseUrl}}/users/{{customerId}}
+Authorization: Bearer {{customerToken}}
+
+###
+
+### Get Driver Profile
+GET {{baseUrl}}/users/{{driverId}}
+Authorization: Bearer {{driverToken}}
+
+###
+
+### Update Customer Profile
+PUT {{baseUrl}}/users/{{customerId}}
+Authorization: Bearer {{customerToken}}
+Content-Type: application/json
+
+{
+    "name": "Updated Name",
+    "phone": "+1987654321"
+}
+
+###
+
+### Update Driver Profile
+PUT {{baseUrl}}/users/{{driverId}}
+Authorization: Bearer {{driverToken}}
+Content-Type: application/json
+
+{
+    "name": "Updated Driver Name",
+    "phone": "+1987654321",
+    "licenseNumber": "DL654321"
+}
+
+###
+
+### Delete Customer Account
+DELETE {{baseUrl}}/users/{{customerId}}
+Authorization: Bearer {{customerToken}}
+
+###
+
+### Delete Driver Account
+DELETE {{baseUrl}}/users/{{driverId}}
+Authorization: Bearer {{driverToken}}
+
