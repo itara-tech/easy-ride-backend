@@ -40,6 +40,15 @@ app.get("/", (req, res) => {
   res.send("Welcome to the API")
 })
 
+prisma
+  .$connect()
+  .then(() => {
+    console.log("Successfully connected to the database")
+  })
+  .catch((error) => {
+    console.error("Failed to connect to the database:", error)
+  })
+
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
   console.log(`
