@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
     port: 587,
     auth: {
         user: 'apismtp@mailtrap.io',
-        pass: '********a928', // replace with your actual password
+        pass: '********a928', 
     },
     secure: false,
     tls: {
