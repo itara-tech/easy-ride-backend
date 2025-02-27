@@ -1,15 +1,12 @@
-@baseUrl = https://easy-ride-backend-xl8m.onrender.com/api
-@authToken = 
-@customerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImU4MDE0ZWExLWJkNzItNDBjOC1hZTNhLTA3NWU2ZTJkODU2MSIsInVzZXJUeXBlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3Mzk3NzI2MDksImV4cCI6MTc0MjM2NDYwOX0.jHNgcuoKmNLzoDs9BlNIvYK2DTdbV8J2BeVmoC9F9Rk
-@driverToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJiMjc2Nzk2LTU2ZjAtNGE0ZC1iZWU4LTdjYTJkYTNhMTFjZSIsInVzZXJUeXBlIjoiRFJJVkVSIiwiaWF0IjoxNzM5NzcyNjYyLCJleHAiOjE3NDIzNjQ2NjJ9.vmh0288p961zsIQJSibE-uujSacNNEBHib8fPxlcFFI
+@baseUrl = http://localhost:3000/api
 
-@customerId = e8014ea1-bd72-40c8-ae3a-075e6e2d8561
+@customerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQ0ZjAxODRlLTBmOWYtNDc2Zi1hOTBmLTAxYmNmYWUyMjU4MSIsInVzZXJUeXBlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3NDA2Njg5NTMsImV4cCI6MTc0MzI2MDk1M30.JIoGtx4N7eosI6N4HHhvNXXJQF2SmbyOCh7eC15ZnXw
+@driverToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImEyZTExOTQ3LWE2YjMtNDk1Yy1iOTUwLTE1NjM1Zjk3YmFlYSIsInVzZXJUeXBlIjoiRFJJVkVSIiwiaWF0IjoxNzQwNjY4OTg5LCJleHAiOjE3NDMyNjA5ODl9.RWDVxZub3iHGI3OOeIl9f7VlO5ofs90Hbb4RBqQXfOE
 
-@driverId = 2b276796-56f0-4a4d-bee8-7ca2da3a11ce
+@customerId = 44f0184e-0f9f-476f-a90f-01bcfae22581
 
-@vehicleId = b65f06a3-ea66-43ae-a2b4-33a8180ebd5b
+@driverId = a2e11947-a6b3-495c-b950-15635f97baea
 
-@rideId = d6edfcd4-849a-4f9d-9bfb-d5051d9a12b1
 
 ### Register Customer
 POST {{baseUrl}}/auth/customer/register HTTP/1.1
