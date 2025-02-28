@@ -16,7 +16,7 @@
     "seed": "npx prisma db seed"
   },
   "dependencies": {
-    "@prisma/client": "^6.3.0",
+    "@prisma/client": "^6.4.1",
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
@@ -33,6 +33,7 @@
     "passport-facebook": "^3.0.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.1",
+    "prisma": "^6.4.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
   }

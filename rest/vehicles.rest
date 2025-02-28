@@ -1,12 +1,15 @@
 @baseUrl = http://localhost:3000/api
-@customerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQxZWMyMTFhLWUwMzktNGZhZi05OTFkLTY2N2RlZTA1MGQzNSIsInVzZXJUeXBlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3Mzk1MTc3NzEsImV4cCI6MTc0MjEwOTc3MX0.a3JyMcbOdg1TBAivhVJFO9P8yFt8z_QRpMKEUHPNudw
-@driverToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4YWU5ODM3LTFkMGYtNDAyNC1iMzczLWJjYTNjYTY0NzZhZSIsInVzZXJUeXBlIjoiRFJJVkVSIiwiaWF0IjoxNzM5NTE3Nzk5LCJleHAiOjE3NDIxMDk3OTl9.23rYk_ry_e_WIKhwSy4QW496sDJB_5wYe2Q_24iAfDQ
+@customerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhlYWUxNWUwLTNjZGUtNDkxMC05NGM4LTUwYWYwMmYzNmRkOSIsInVzZXJUeXBlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3NDA3NDE1NzAsImV4cCI6MTc0MzMzMzU3MH0.SJwDQAQD79IfTc35d4vxGXnV8i-QI1L1bRq2VHUhfEw
 
-@customerId = 41ec211a-e039-4faf-991d-667dee050d35
+@driverToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImFmYjBmMDY1LWIwYTktNDliZC05NjM4LWYzMTJkNzQ2OGQxNSIsInVzZXJUeXBlIjoiRFJJVkVSIiwiaWF0IjoxNzQwNzQxNjE0LCJleHAiOjE3NDMzMzM2MTR9.ppCV1Ins0zrODyGCd8T0oSsH2K9S4woETgS56X-8DPM
 
-@driverId = 38ae9837-1d0f-4024-b373-bca3ca6476ae
+@customerId = 8eae15e0-3cde-4910-94c8-50af02f36dd9
 
-@vehicleId = 05aef665-4ebb-4c7b-8cf9-e30bae05f0ee
+@driverId = afb0f065-b0a9-49bd-9638-f312d7468d15
+
+@vehicleId = 33fbe171-1fef-4796-9929-e5b5618cb376
+
+
 
 ### Vehicle Routes ###
 
@@ -18,7 +21,7 @@ Content-Type: application/json
 {
   "driverId": "{{driverId}}",
   "type": "CAR",
-  "regNo": "ABC123",
+  "regNo": "ABC9123",
   "model": "Camry",
   "color": "Gold"
 }

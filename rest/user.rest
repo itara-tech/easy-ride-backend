@@ -1,10 +1,18 @@
-@baseUrl = http://localhost:3000/api
-@customerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQxZWMyMTFhLWUwMzktNGZhZi05OTFkLTY2N2RlZTA1MGQzNSIsInVzZXJUeXBlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3Mzk2MDkxNTgsImV4cCI6MTc0MjIwMTE1OH0.cjAhI1vlyLXkWz4I3klFTxKpWr_oo062fBw3-zlgg8Y
-@driverToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjM4YWU5ODM3LTFkMGYtNDAyNC1iMzczLWJjYTNjYTY0NzZhZSIsInVzZXJUeXBlIjoiRFJJVkVSIiwiaWF0IjoxNzM5NjA5MTgxLCJleHAiOjE3NDIyMDExODF9.IYzqaxAlbWs5zXyoqxYGAZGBc1Mz7rpfqJqFW7gsZEQ
+@baseUrl = https://easy-ride-backend-xl8m.onrender.com/api
+@customerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImU4MDE0ZWExLWJkNzItNDBjOC1hZTNhLTA3NWU2ZTJkODU2MSIsInVzZXJUeXBlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3Mzk3NzI2MDksImV4cCI6MTc0MjM2NDYwOX0.jHNgcuoKmNLzoDs9BlNIvYK2DTdbV8J2BeVmoC9F9Rk
+@driverToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJiMjc2Nzk2LTU2ZjAtNGE0ZC1iZWU4LTdjYTJkYTNhMTFjZSIsInVzZXJUeXBlIjoiRFJJVkVSIiwiaWF0IjoxNzM5NzcyNjYyLCJleHAiOjE3NDIzNjQ2NjJ9.vmh0288p961zsIQJSibE-uujSacNNEBHib8fPxlcFFI
 
-@customerId = 41ec211a-e039-4faf-991d-667dee050d35
+@customerId = e8014ea1-bd72-40c8-ae3a-075e6e2d8561
 
-@driverId = 38ae9837-1d0f-4024-b373-bca3ca6476ae
+@driverId = 2b276796-56f0-4a4d-bee8-7ca2da3a11ce
+
+@vehicleId = dbc00890-5d59-4572-8bc3-e4b10d09e8a1
+
+@rideId = 2204aae8-6f84-4a97-8ef8-fd042a16bf7d
+
+@tripId = f20dadba-60e1-4b7d-9158-1fc45cd677f2
+
+@previousRideId = 82c96a16-054e-4915-8c48-28b721bc63d9
 
 ### User Routes ###
 

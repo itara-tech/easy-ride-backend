@@ -13,6 +13,8 @@ model Customer {
   email          String           @unique
   password       String
   phone          String
+  avatar    String?
+  currentLocation Json?
   isVerified     Boolean          @default(false)
   createdAt      DateTime         @default(now())
   ratings        CustomerRating[]
@@ -30,6 +32,7 @@ model Driver {
   email           String           @unique
   password        String
   phone           String
+  avatar    String?
   licenseNumber   String
   isVerified      Boolean          @default(false)
   currentLocation Json?
@@ -52,6 +55,7 @@ model Vehicle {
   regNo     String      @unique
   model     String
   color     String
+  avatar    String?
   isActive  Boolean     @default(true)
   createdAt DateTime    @default(now())
   driver    Driver      @relation(fields: [driverId], references: [id])

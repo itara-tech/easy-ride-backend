@@ -4,7 +4,8 @@ import {
   acceptRide, 
   completeRide, 
   cancelRide, 
-  getNearbyRides 
+  getNearbyRides,
+  // reorderRide 
 } from '../services/rideService.js';
 
 export const createRideRequestController = async (req, res) => {
@@ -67,12 +68,22 @@ export const getNearbyRidesController = async (req, res) => {
   try {
     const { lat, lon, radius } = req.query;
     const rides = await getNearbyRides(
-      parseFloat(lat), 
-      parseFloat(lon), 
-      parseFloat(radius)
+      lat, lon, radius
     );
     res.status(200).json(rides);
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+};
+
+export const reorderRideController = async (req, res) => {
+  const { previousRideId } = req.body;
+
+  try {
+    const newRideRequest = await reorderRide(previousRideId);
+    res.status(201).json(newRideRequest);
+  } catch (error) {
+    console.error("Error reordering ride:", error.message);
+    res.status(400).json({ message: "Failed to reorder ride", error: error.message });
   }
 };
