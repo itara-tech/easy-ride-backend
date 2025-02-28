@@ -30,10 +30,21 @@ export const createRideRequest = async (customerId, source, destination) => {
       throw new Error("Unable to calculate ride distance");
     }
 
-    // pricing calculation 
-    const baseRate = 5.0; // starting fare
-    const ratePerKm = 700; // per kilometer
+    // Basic pricing calculation (adjust as needed)
+    const baseRate = 5.0; // Base starting fare
+    const ratePerKm = 700; // Rate per kilometer
     const estimatedPrice = Math.max(baseRate, baseRate + distance * ratePerKm);
+
+    // Update customer's current location
+    await prisma.customer.update({
+      where: { id: customerId },
+      data: {
+        currentLocation: {
+            lat: source.lat,
+            lon: source.lon,
+        },
+      },
+    });
 
     return await prisma.rideRequest.create({
       data: {
@@ -190,7 +201,7 @@ export const getNearbyRides = async (lat, lon, radius) => {
     throw new Error('Prisma client not initialized');
   }
 
-  console.log(`Searching for rides near (${lat}, ${lon}) within ${radius} km`)
+  console.log(`Searching for rides near (${lat}, ${lon}) within ${radius} km`);
 
   try {
     const rides = await prisma.rideRequest.findMany({
@@ -200,44 +211,44 @@ export const getNearbyRides = async (lat, lon, radius) => {
       include: {
         customer: true,
       },
-    })
+    });
 
-    console.log(`Found ${rides.length} total ride requests`)
+    console.log(`Found ${rides.length} total ride requests`);
 
     if (rides.length === 0) {
-      console.log("No ride requests found in the database")
-      return []
+      console.log("No ride requests found in the database");
+      return [];
     }
 
     const nearbyRides = rides.filter((ride) => {
       if (!ride.customer || !ride.customer.currentLocation) {
-        console.log(`Ride ${ride.id} skipped: Customer or currentLocation not available`)
-        return false
+        console.log(`Ride ${ride.id} skipped: Customer or currentLocation not available`);
+        return false;
       }
 
-      const customerLat = Number.parseFloat(ride.customer.currentLocation.lat)
-      const customerLon = Number.parseFloat(ride.customer.currentLocation.lon)
+      const customerLat = Number.parseFloat(ride.customer.currentLocation?.lat);
+      const customerLon = Number.parseFloat(ride.customer.currentLocation?.lon);
 
       if (isNaN(customerLat) || isNaN(customerLon)) {
         console.log(
-          `Ride ${ride.id} skipped: Invalid customer location (${ride.customer.currentLocation.lat}, ${ride.customer.currentLocation.lon})`,
-        )
-        return false
+          `Ride ${ride.id} skipped: Invalid customer location (${ride.customer.currentLocation?.lat}, ${ride.customer.currentLocation?.lon})`,
+        );
+        return false;
       }
 
-      const distance = calculateDistance(lat, lon, customerLat, customerLon)
-      console.log(`Ride ${ride.id} distance: ${distance} km`)
+      const distance = calculateDistance(lat, lon, customerLat, customerLon);
+      console.log(`Ride ${ride.id} distance: ${distance} km`);
 
-      return distance <= radius
-    })
+      return distance <= radius;
+    });
 
-    console.log(`Found ${nearbyRides.length} nearby rides`)
-    return nearbyRides
+    console.log(`Found ${nearbyRides.length} nearby rides`);
+    return nearbyRides;
   } catch (error) {
     console.error('Error getting nearby rides:', error);
     throw error;
   }
-}
+};
 
 function calculateDistance(lat1, lon1, lat2, lon2) {
   const R = 6371;

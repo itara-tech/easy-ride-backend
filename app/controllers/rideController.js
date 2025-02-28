@@ -68,9 +68,7 @@ export const getNearbyRidesController = async (req, res) => {
   try {
     const { lat, lon, radius } = req.query;
     const rides = await getNearbyRides(
-      parseFloat(lat), 
-      parseFloat(lon), 
-      parseFloat(radius)
+      lat, lon, radius
     );
     res.status(200).json(rides);
   } catch (error) {
