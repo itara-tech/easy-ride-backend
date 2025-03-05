@@ -1,0 +1,21 @@
+@baseUrl = http://localhost:3000/api
+@token = your_token_here
+
+### Get user profile
+GET {{baseUrl}}/users/user_id_here
+Authorization: Bearer {{token}}
+
+### Update user profile
+PUT {{baseUrl}}/users/user_id_here
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Updated Name",
+  "phone": "+1987654321"
+}
+
+### Delete user account
+DELETE {{baseUrl}}/users/user_id_here
+Authorization: Bearer {{token}}
+

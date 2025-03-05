@@ -1,4 +1,4 @@
-@baseUrl = http://localhost:3000/api
+@baseUrl = https://easy-ride-backend-xl8m.onrender.com/api
 @customerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhlYWUxNWUwLTNjZGUtNDkxMC05NGM4LTUwYWYwMmYzNmRkOSIsInVzZXJUeXBlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3NDA3NDE1NzAsImV4cCI6MTc0MzMzMzU3MH0.SJwDQAQD79IfTc35d4vxGXnV8i-QI1L1bRq2VHUhfEw
 
 @driverToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImFmYjBmMDY1LWIwYTktNDliZC05NjM4LWYzMTJkNzQ2OGQxNSIsInVzZXJUeXBlIjoiRFJJVkVSIiwiaWF0IjoxNzQwNzQxNjE0LCJleHAiOjE3NDMzMzM2MTR9.ppCV1Ins0zrODyGCd8T0oSsH2K9S4woETgS56X-8DPM
@@ -9,9 +9,9 @@
 
 @vehicleId = f9e7fb4b-1028-4a35-9b0b-06bb3b94124d
 
-@rideId = 6790a7a4-ffd1-4ab0-b22e-77dabb222a03
+@rideId = e1127483-ce1b-452e-ad9c-e4f09c30433a
 
-@tripId = 
+@tripId = 924fa96c-503c-4e11-a111-a6fff19ced89
 
 @previousRideId = 
 
@@ -25,14 +25,14 @@ Authorization: Bearer {{customerToken}}
 {
     "customerId": "{{customerId}}",
     "pickupLocation": {
-        "lat": -1.9403,
-        "lon": 30.0619,
-        "address": "123 Main "
+        "lat": -2.00116,
+        "lon": 30.14428,
+        "address": "X4XV+RWV, Kigali "
     },
     "dropoffLocation": {
-        "lat": -1.9503,
-        "lon": 30.0719,
-        "address": "456 Elm St"
+        "lat": -1.94441,
+        "lon": 30.09065,
+        "address": "KG 563 St, Kigali"
     }
 }
 

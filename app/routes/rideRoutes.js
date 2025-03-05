@@ -5,7 +5,7 @@ import {
   completeRideController,
   cancelRideController,
   getNearbyRidesController,
-  reorderRideController
+  reorderRideController,
 } from '../controllers/rideController.js';
 import { authenticate, isCustomer, isDriver } from '../middleware/auth.js';
 

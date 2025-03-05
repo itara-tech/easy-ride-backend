@@ -1,0 +1,35 @@
+@baseUrl = http://localhost:3000/api
+@token = your_token_here
+
+### Create wallet
+POST {{baseUrl}}/wallets
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "userId": "user_id_here",
+  "userType": "customer"
+}
+
+### Get wallet balance
+GET {{baseUrl}}/wallets/user_id_here
+Authorization: Bearer {{token}}
+
+### Add funds to wallet
+POST {{baseUrl}}/wallets/user_id_here/add
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "amount": 1000
+}
+
+### Deduct funds from wallet
+POST {{baseUrl}}/wallets/user_id_here/deduct
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "amount": 500
+}
+

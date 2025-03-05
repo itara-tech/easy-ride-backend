@@ -1,0 +1,33 @@
+@baseUrl = http://localhost:3000/api
+@token = your_token_here
+
+### Create vehicle
+POST {{baseUrl}}/vehicles
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "driverId": "driver_id_here",
+  "type": "CAR",
+  "model": "Toyota Camry",
+  "plate": "ABC123",
+  "color": "White"
+}
+
+### Get driver vehicles
+GET {{baseUrl}}/vehicles/driver/driver_id_here
+Authorization: Bearer {{token}}
+
+### Update vehicle
+PUT {{baseUrl}}/vehicles/vehicle_id_here
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "isActive": false
+}
+
+### Delete vehicle
+DELETE {{baseUrl}}/vehicles/vehicle_id_here
+Authorization: Bearer {{token}}
+

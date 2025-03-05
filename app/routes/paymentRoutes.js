@@ -3,7 +3,6 @@ import { authenticate, isCustomer, isDriver } from '../middleware/auth.js';
 
 const router = express.Router();
 
-
 router.post('/create', authenticate, isCustomer, (req, res) => {
   // TODO: Implement payment creation logic
   res.status(501).json({ message: 'Payment creation not implemented yet' });

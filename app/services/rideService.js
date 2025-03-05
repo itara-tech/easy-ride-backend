@@ -1,7 +1,5 @@
-import { PrismaClient } from "@prisma/client";
-import { prisma } from "../Server.js";
-
-
+import { PrismaClient } from '@prisma/client';
+import { prisma } from '../Server.js';
 
 export const createRideRequest = async (customerId, source, destination) => {
   if (!prisma) {
@@ -14,10 +12,10 @@ export const createRideRequest = async (customerId, source, destination) => {
     });
 
     if (!customer) {
-      throw new Error("Customer not found");
+      throw new Error('Customer not found');
     }
     if (!source || !source.lat || !source.lon || !destination || !destination.lat || !destination.lon) {
-      throw new Error("Invalid source or destination coordinates");
+      throw new Error('Invalid source or destination coordinates');
     }
 
     const distance = calculateDistance(source.lat, source.lon, destination.lat, destination.lon);
@@ -27,7 +25,7 @@ export const createRideRequest = async (customerId, source, destination) => {
       console.warn(`Invalid distance calculation: 
         Source: (${source.lat}, ${source.lon}), 
         Destination: (${destination.lat}, ${destination.lon})`);
-      throw new Error("Unable to calculate ride distance");
+      throw new Error('Unable to calculate ride distance');
     }
 
     // Basic pricing calculation (adjust as needed)
@@ -40,8 +38,8 @@ export const createRideRequest = async (customerId, source, destination) => {
       where: { id: customerId },
       data: {
         currentLocation: {
-            lat: source.lat,
-            lon: source.lon,
+          lat: source.lat,
+          lon: source.lon,
         },
       },
     });
@@ -58,14 +56,14 @@ export const createRideRequest = async (customerId, source, destination) => {
           longitude: destination.lon,
         }),
         estimatedPrice,
-        status: "REQUESTED",
+        status: 'REQUESTED',
       },
     });
   } catch (error) {
-    console.error("Error creating ride request:", error.message);
-    throw new Error("Failed to create ride request");
+    console.error('Error creating ride request:', error.message);
+    throw new Error('Failed to create ride request');
   }
-}
+};
 
 export const acceptRide = async (rideRequestId, driverId) => {
   const existingAcceptance = await prisma.rideAccept.findUnique({
@@ -85,9 +83,8 @@ export const acceptRide = async (rideRequestId, driverId) => {
         requestId: rideRequestId,
         driverId,
         acceptedAt: new Date(),
-      }
+      },
     });
-
 
     const rideRequest = await prisma.rideRequest.findUnique({
       where: { id: rideRequestId },
@@ -98,10 +95,10 @@ export const acceptRide = async (rideRequestId, driverId) => {
         customerId: rideRequest.customerId,
         driverId,
         requestId: rideRequestId,
-        status: "ACCEPTED",
+        status: 'ACCEPTED',
         source: rideRequest.source,
         destination: rideRequest.destination,
-        paymentStatus: "PENDING",
+        paymentStatus: 'PENDING',
       },
     });
 
@@ -110,27 +107,25 @@ export const acceptRide = async (rideRequestId, driverId) => {
     console.error('Error accepting ride:', error);
     throw error;
   }
-}
+};
 
 export const completeRide = async (rideId, finalAmount) => {
   if (!prisma) {
     throw new Error('Prisma client not initialized');
   }
-  console.log(`Attempting to complete ride with rideId: ${rideId}`)
-
-
+  console.log(`Attempting to complete ride with rideId: ${rideId}`);
 
   try {
     const existingTrip = await prisma.trip.findFirst({
       where: { requestId: rideId },
-    })
+    });
 
     if (!existingTrip) {
-      throw new Error("Trip not found. Unable to complete ride.")
+      throw new Error('Trip not found. Unable to complete ride.');
     }
 
-    if (existingTrip.status === "COMPLETED") {
-      return { message: "Ride is already completed", existingTrip }
+    if (existingTrip.status === 'COMPLETED') {
+      return { message: 'Ride is already completed', existingTrip };
     }
 
     const rideComplete = await prisma.rideComplete.create({
@@ -144,7 +139,7 @@ export const completeRide = async (rideId, finalAmount) => {
     // Update the trip status to completed
     const updatedTrip = await prisma.trip.update({
       where: { id: existingTrip.id },
-      data: { status: "COMPLETED" },
+      data: { status: 'COMPLETED' },
     });
 
     return { rideComplete, updatedTrip };
@@ -152,7 +147,7 @@ export const completeRide = async (rideId, finalAmount) => {
     console.error('Error completing ride:', error);
     throw error;
   }
-}
+};
 
 export const cancelRide = async (tripId, canceledByType, canceledById, reason) => {
   if (!prisma) {
@@ -172,13 +167,12 @@ export const cancelRide = async (tripId, canceledByType, canceledById, reason) =
     const cancedRide = await prisma.rideCancel.findFirst({
       where: {
         tripId,
-      }
-    })
+      },
+    });
 
     if (cancedRide) {
-      return { message: "Ride is already canceled", trip }
+      return { message: 'Ride is already canceled', trip };
     }
-
 
     return await prisma.rideCancel.create({
       data: {
@@ -195,7 +189,6 @@ export const cancelRide = async (tripId, canceledByType, canceledById, reason) =
   }
 };
 
-
 export const getNearbyRides = async (lat, lon, radius) => {
   if (!prisma) {
     throw new Error('Prisma client not initialized');
@@ -206,7 +199,7 @@ export const getNearbyRides = async (lat, lon, radius) => {
   try {
     const rides = await prisma.rideRequest.findMany({
       where: {
-        status: "REQUESTED",
+        status: 'REQUESTED',
       },
       include: {
         customer: true,
@@ -216,7 +209,7 @@ export const getNearbyRides = async (lat, lon, radius) => {
     console.log(`Found ${rides.length} total ride requests`);
 
     if (rides.length === 0) {
-      console.log("No ride requests found in the database");
+      console.log('No ride requests found in the database');
       return [];
     }
 
@@ -257,10 +250,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(lat1 * (Math.PI / 180)) *
-    Math.cos(lat2 * (Math.PI / 180)) *
-    Math.sin(dLon / 2) *
-    Math.sin(dLon / 2);
+    Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
 
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 

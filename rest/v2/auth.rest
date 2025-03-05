@@ -1,0 +1,51 @@
+@baseUrl = http://localhost:3000/api
+
+### Send OTP
+POST {{baseUrl}}/auth/send-otp
+Content-Type: application/json
+
+{
+  "phone": "+1234567890",
+  "userType": "customer"
+}
+
+### Verify OTP
+POST {{baseUrl}}/auth/verify-otp
+Content-Type: application/json
+
+{
+  "phone": "+1234567890",
+  "otp": "123456"
+}
+
+### Register user
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "userType": "customer",
+  "name": "John Doe",
+  "email": "john@example.com",
+  "phone": "+1234567890",
+  "password": "password123"
+}
+
+### Login user
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "userType": "customer",
+  "email": "john@example.com",
+  "password": "password123"
+}
+
+### Google Authentication
+GET {{baseUrl}}/auth/google
+
+### Facebook Authentication
+GET {{baseUrl}}/auth/facebook
+
+### Apple Authentication
+GET {{baseUrl}}/auth/apple
+

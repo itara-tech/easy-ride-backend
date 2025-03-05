@@ -1,0 +1,16 @@
+@baseUrl = http://localhost:3000/api
+@token = your_token_here
+
+### Create chat room
+POST {{baseUrl}}/chat/room
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "customerId": "customer_id_here",
+  "driverId": "driver_id_here"
+}
+
+# Note: Sending messages and getting chat history will now be handled by Socket.IO
+# You'll need to test these features using a WebSocket client or in your frontend application
+

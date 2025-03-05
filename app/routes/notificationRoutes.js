@@ -1,20 +1,20 @@
-import express from "express"
+import express from 'express';
 import {
-    createNotification,
-    getUserNotifications,
-    markNotificationAsRead,
-} from "../controllers/notificationController.js"
-import { authenticateToken, isResourceOwner } from "../middleware/auth.js"
+  createNotification,
+  getUserNotifications,
+  markNotificationAsRead,
+} from '../controllers/notificationController.js';
+import { authenticateToken, isResourceOwner } from '../middleware/auth.js';
 
-const router = express.Router()
+const router = express.Router();
 
 // Create notification (requires authentication)
-router.post("/", createNotification)
+router.post('/', createNotification);
 
 // Get user's notifications (requires authentication and resource ownership)
-router.get("/user/:userId", isResourceOwner, getUserNotifications)
+router.get('/user/:userId', isResourceOwner, getUserNotifications);
 
 // Mark notification as read (requires authentication)
-router.put("/:id/read", markNotificationAsRead)
+router.put('/:id/read', markNotificationAsRead);
 
-export default router
+export default router;

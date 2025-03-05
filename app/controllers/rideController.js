@@ -1,15 +1,15 @@
 import { prisma } from '../Server.js';
-import { 
-  createRideRequest, 
-  acceptRide, 
-  completeRide, 
-  cancelRide, 
+import {
+  createRideRequest,
+  acceptRide,
+  completeRide,
+  cancelRide,
   getNearbyRides,
-  // reorderRide 
+  // reorderRide
 } from '../services/rideService.js';
 
 export const createRideRequestController = async (req, res) => {
-  console.log("Incoming request data:", req.body);
+  console.log('Incoming request data:', req.body);
   try {
     const { customerId, pickupLocation, dropoffLocation } = req.body;
 
@@ -67,9 +67,7 @@ export const cancelRideController = async (req, res) => {
 export const getNearbyRidesController = async (req, res) => {
   try {
     const { lat, lon, radius } = req.query;
-    const rides = await getNearbyRides(
-      lat, lon, radius
-    );
+    const rides = await getNearbyRides(lat, lon, radius);
     res.status(200).json(rides);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -83,7 +81,7 @@ export const reorderRideController = async (req, res) => {
     const newRideRequest = await reorderRide(previousRideId);
     res.status(201).json(newRideRequest);
   } catch (error) {
-    console.error("Error reordering ride:", error.message);
-    res.status(400).json({ message: "Failed to reorder ride", error: error.message });
+    console.error('Error reordering ride:', error.message);
+    res.status(400).json({ message: 'Failed to reorder ride', error: error.message });
   }
 };
