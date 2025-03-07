@@ -1,31 +1,53 @@
 import prisma from '../configs/database.js';
 
 export const createNotification = async (userId, title, message) => {
-  const notification = await prisma.notification.create({
-    data: {
-      userId,
-      title,
-      message,
-    },
+  const user = await prisma.customer.findUnique({
+    where: { id: userId },
+  }) || await prisma.driver.findUnique({
+    where: { id: userId },
   });
-  return notification;
+
+  if (!user) {
+    console.error(`User with ID ${userId} not found in database.`);
+    throw new Error('User not found');
+  }
+  console.log(user)
+  // Check if the user is a Customer or a Driver
+  const customer = await prisma.customer.findUnique({ where: { id: userId } });
+  const driver = await prisma.driver.findUnique({ where: { id: userId } });
+
+  if (!customer && !driver) {
+    throw new Error('User not found');
+  }
+
+  const data = {
+    title,
+    message,
+    isRead: false,
+    createdAt: new Date(),
+    customerId: customer ? userId : null,
+    driverId: driver ? userId : null,
+  };
+
+  return await prisma.notification.create({ data });
 };
 
 export const getUserNotifications = async (userId, page = 1, limit = 10) => {
   const skip = (page - 1) * limit;
-  const notifications = await prisma.notification.findMany({
-    where: { userId },
+
+  return await prisma.notification.findMany({
+    where: {
+      OR: [{ customerId: userId }, { driverId: userId }],
+    },
     orderBy: { createdAt: 'desc' },
     skip,
     take: limit,
   });
-  return notifications;
 };
 
 export const markNotificationAsRead = async (notificationId) => {
-  const updatedNotification = await prisma.notification.update({
+  return await prisma.notification.update({
     where: { id: notificationId },
     data: { isRead: true },
   });
-  return updatedNotification;
 };

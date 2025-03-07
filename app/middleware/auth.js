@@ -3,14 +3,19 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+
 // to authenticate JWT token
 export const authenticateToken = passport.authenticate('jwt', { session: false });
 export const authenticate = authenticateToken;
 
+
 // to check if user is a customer
 export const isCustomer = async (req, res, next) => {
   try {
-    if (req.user.userType !== 'CUSTOMER') {
+    const user = await prisma.customer.findUnique({ where: { id: req.user.id } })
+    console.log(user);
+
+    if (!user) {
       return res.status(403).json({ message: 'Access denied. Customer only.' });
     }
     next();
@@ -22,7 +27,9 @@ export const isCustomer = async (req, res, next) => {
 // to check if user is a driver
 export const isDriver = async (req, res, next) => {
   try {
-    if (req.user.userType !== 'DRIVER') {
+    const user = await prisma.driver.findUnique({ where: { id: req.user.id } })
+    console.log(user);
+    if (!user) {
       return res.status(403).json({ message: 'Access denied. Driver only.' });
     }
     next();

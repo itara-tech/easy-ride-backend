@@ -26,6 +26,7 @@ model Customer {
   trips           Trip[]
   chatrooms       ChatRoom[]
   wallet          Wallet?
+  messages   Message[]
 }
 
 model Driver {
@@ -50,6 +51,7 @@ model Driver {
   vehicles        Vehicle[]
   chatrooms       ChatRoom[]
   wallet          Wallet?
+  messages   Message[]
 }
 
 model Vehicle {
@@ -126,8 +128,6 @@ model RideCancel {
 
 model Notification {
   id         String    @id @default(uuid())
-  userType   UserType
-  userId     String
   title      String
   message    String
   isRead     Boolean   @default(false)
@@ -213,12 +213,15 @@ model ChatRoom {
 }
 
 model Message {
-  id         String   @id @default(uuid())
+  id         String    @id @default(uuid())
   chatRoomId String
-  senderId   String
+  customerId String?   // Optional foreign key for Customer
+  driverId   String?   // Optional foreign key for Driver
   content    String
-  createdAt  DateTime @default(now())
-  chatRoom   ChatRoom @relation(fields: [chatRoomId], references: [id])
+  createdAt  DateTime  @default(now())
+  chatRoom   ChatRoom  @relation(fields: [chatRoomId], references: [id])
+  customer   Customer? @relation(fields: [customerId], references: [id]) // Optional relation to Customer
+  driver     Driver?   @relation(fields: [driverId], references: [id])   // Optional relation to Driver
 }
 
 enum PaymentStatus {

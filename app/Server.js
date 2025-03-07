@@ -14,15 +14,18 @@ import rideRoutes from './routes/rideRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
 import vehicleRoutes from './routes/vehicleRoutes.js';
+import chatRoutes from './routes/chatRoutes.js';
 
 import './configs/passport.js';
 import { PrismaClient } from '@prisma/client';
+import { setupSocketHandlers } from './middleware/socketHandlers.js';
 
 dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
+setupSocketHandlers(io);
 export const prisma = new PrismaClient();
 
 app.use(cors());
@@ -34,7 +37,9 @@ app.use(passport.initialize());
 
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
-// app.use("/api/notifications", notificationRoutes)
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/chat', chatRoutes);
+
 // app.use("/api/payments", paymentRoutes)
 app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/rides', rideRoutes);

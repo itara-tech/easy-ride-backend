@@ -1,17 +1,18 @@
-@baseUrl = https://easy-ride-backend-xl8m.onrender.com/api
-@customerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhlYWUxNWUwLTNjZGUtNDkxMC05NGM4LTUwYWYwMmYzNmRkOSIsInVzZXJUeXBlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3NDA3NDE1NzAsImV4cCI6MTc0MzMzMzU3MH0.SJwDQAQD79IfTc35d4vxGXnV8i-QI1L1bRq2VHUhfEw
+@baseUrl = http://localhost:3000/api
 
-@driverToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImFmYjBmMDY1LWIwYTktNDliZC05NjM4LWYzMTJkNzQ2OGQxNSIsInVzZXJUeXBlIjoiRFJJVkVSIiwiaWF0IjoxNzQwNzQxNjE0LCJleHAiOjE3NDMzMzM2MTR9.ppCV1Ins0zrODyGCd8T0oSsH2K9S4woETgS56X-8DPM
+@customerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE2ZWVjYjc1LTQ2MTEtNGYxZC04OTMyLTRjYTY1MTUxMTJjYiIsInVzZXJUeXBlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3NDEyODE5MTYsImV4cCI6MTc0Mzg3MzkxNn0.i0mXiP5mQ_7hPvstF9q4uxOTFWEd6QiRsIec-HwWUxU
 
-@customerId = 8eae15e0-3cde-4910-94c8-50af02f36dd9
+@driverToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzZDFhZjYzLTg3NjEtNGJhOS04MWYyLTI1Yjk2ODJjNzI0OSIsInVzZXJUeXBlIjoiRFJJVkVSIiwiaWF0IjoxNzQxMjgxOTQ1LCJleHAiOjE3NDM4NzM5NDV9.OAuY-X7woWmF0wAoIT1kHjpHsj8vyuAhu1_RCwaw4Q8
 
-@driverId = afb0f065-b0a9-49bd-9638-f312d7468d15
+@customerId = 16eecb75-4611-4f1d-8932-4ca6515112cb
 
-@vehicleId = f9e7fb4b-1028-4a35-9b0b-06bb3b94124d
+@driverId = 43d1af63-8761-4ba9-81f2-25b9682c7249
 
-@rideId = e1127483-ce1b-452e-ad9c-e4f09c30433a
+@vehicleId = 
 
-@tripId = 924fa96c-503c-4e11-a111-a6fff19ced89
+@rideId = 
+
+@tripId = 
 
 @previousRideId = 
 

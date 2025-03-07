@@ -1,16 +1,57 @@
 @baseUrl = http://localhost:3000/api
-@token = your_token_here
+@customerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NjdjMmY4LThjNmUtNGE4ZS1iNjE5LTMwMjdiNGI5ODJmMSIsInVzZXJUeXBlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3NDEzMzYxMjcsImV4cCI6MTc0MzkyODEyN30.gXidjvPW-aKP1dg8ifzHWKgBfSN0g_ZRlCnfpEV1Xfo
+@driverToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImJkYjA4YTFiLTIxNzgtNDc0Yy05YzY1LTQ5YTNjZGU1YzdiYSIsInVzZXJUeXBlIjoiRFJJVkVSIiwiaWF0IjoxNzQxMzM2MTY5LCJleHAiOjE3NDM5MjgxNjl9.fFslUPigpFlZ7ZOI63sHCXlpLlH49N8H_WeOzQpzJp0
 
-### Create chat room
-POST {{baseUrl}}/chat/room
-Authorization: Bearer {{token}}
+@customerId = 6467c2f8-8c6e-4a8e-b619-3027b4b982f1
+
+@driverId = bdb08a1b-2178-474c-9c65-49a3cde5c7ba
+
+@chatRoomId = 1c284c59-4d11-47cf-a063-64afc56e75b5
+
+@messageId =
+
+
+
+
+### Create chat room (Customer initiates)
+POST {{baseUrl}}/chat/room HTTP/1.1
+Authorization: Bearer {{customerToken}}
 Content-Type: application/json
 
 {
-  "customerId": "customer_id_here",
-  "driverId": "driver_id_here"
+  "customerId": "{{customerId}}",
+  "driverId": "{{driverId}}"
 }
 
-# Note: Sending messages and getting chat history will now be handled by Socket.IO
-# You'll need to test these features using a WebSocket client or in your frontend application
+### Send a message (Customer sends a message)
+POST {{baseUrl}}/chat/message HTTP/1.1
+Authorization: Bearer {{customerToken}}
+Content-Type: application/json
 
+{
+  "chatRoomId": "{{chatRoomId}}", 
+  "senderId": "{{customerId}}",
+  "content": "Hello, this is a message from the customer!"
+}
+
+### Send a message (Driver sends a message)
+POST {{baseUrl}}/chat/message HTTP/1.1
+Authorization: Bearer {{driverToken}}
+Content-Type: application/json
+
+{
+  "chatRoomId": "{{chatRoomId}}",
+  "senderId": "{{driverId}}",
+  "content": "Hello, this is a message from the driver!"
+}
+
+
+### Fetch messages in a chat room (Customer fetches messages)
+GET {{baseUrl}}/chat/messages/{{chatRoomId}} HTTP/1.1
+Authorization: Bearer {{customerToken}}
+Content-Type: application/json
+
+### Fetch messages with pagination (Customer fetches messages)
+GET {{baseUrl}}/chat/messages/{{chatRoomId}}?page=1&limit=10 HTTP/1.1
+Authorization: Bearer {{customerToken}}
+Content-Type: application/json

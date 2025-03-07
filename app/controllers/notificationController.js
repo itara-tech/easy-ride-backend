@@ -1,9 +1,9 @@
 import * as notificationService from '../services/notificationService.js';
 
 export const createNotification = async (req, res) => {
-  const { userType, userId, title, message } = req.body;
+  const { userId, title, message } = req.body;
   try {
-    const notification = await notificationService.createNotification(userType, userId, title, message);
+    const notification = await notificationService.createNotification(userId, title, message);
     res.status(201).json(notification);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -12,13 +12,10 @@ export const createNotification = async (req, res) => {
 
 export const getUserNotifications = async (req, res) => {
   const { userId } = req.params;
-  const { page, limit } = req.query;
+  const { page = 1, limit = 10 } = req.query;
+
   try {
-    const notifications = await notificationService.getUserNotifications(
-      userId,
-      Number.parseInt(page),
-      Number.parseInt(limit),
-    );
+    const notifications = await notificationService.getUserNotifications(userId, Number(page), Number(limit));
     res.json(notifications);
   } catch (error) {
     res.status(500).json({ error: error.message });

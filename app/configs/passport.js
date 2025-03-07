@@ -1,7 +1,7 @@
 import passport from 'passport';
+import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
+
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import { Strategy as FacebookStrategy } from 'passport-facebook';
-import { Strategy as AppleStrategy } from 'passport-apple';
 import prisma from './database.js';
 
 passport.use(
@@ -31,61 +31,29 @@ passport.use(
   ),
 );
 
-passport.use(
-  new FacebookStrategy(
-    {
-      clientID: process.env.FACEBOOK_APP_ID,
-      clientSecret: process.env.FACEBOOK_APP_SECRET,
-      callbackURL: '/auth/facebook/callback',
-      profileFields: ['id', 'displayName', 'email'],
-    },
-    async (accessToken, refreshToken, profile, done) => {
-      try {
-        let user = await prisma.customer.findUnique({ where: { facebookId: profile.id } });
-        if (!user) {
-          user = await prisma.customer.create({
-            data: {
-              facebookId: profile.id,
-              name: profile.displayName,
-              email: profile.emails[0].value,
-            },
-          });
-        }
-        done(null, user);
-      } catch (error) {
-        done(error, null);
-      }
-    },
-  ),
-);
 
-passport.use(
-  new AppleStrategy(
-    {
-      clientID: process.env.APPLE_CLIENT_ID,
-      teamID: process.env.APPLE_TEAM_ID,
-      callbackURL: '/auth/apple/callback',
-      keyID: process.env.APPLE_KEY_ID,
-      privateKeyLocation: process.env.APPLE_PRIVATE_KEY_LOCATION,
-    },
-    async (accessToken, refreshToken, profile, done) => {
-      try {
-        let user = await prisma.customer.findUnique({ where: { appleId: profile.id } });
-        if (!user) {
-          user = await prisma.customer.create({
-            data: {
-              appleId: profile.id,
-              name: profile.name.firstName + ' ' + profile.name.lastName,
-              email: profile.email,
-            },
-          });
-        }
-        done(null, user);
-      } catch (error) {
-        done(error, null);
-      }
-    },
-  ),
-);
+const opts = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: process.env.JWT_SECRET,
+};
+
+passport.use(new JwtStrategy(opts, async (jwtPayload, done) => {
+  try {
+let user;
+if (jwtPayload.userType === 'CUSTOMER') {
+  user = await prisma.customer.findUnique({ where: { id: jwtPayload.id } });
+} else if (jwtPayload.userType === 'DRIVER') {
+  user = await prisma.driver.findUnique({ where: { id: jwtPayload.id } });
+}
+
+    if (user) {
+      return done(null, user);
+    } else {
+      return done(null, false);
+    }
+  } catch (error) {
+    return done(error, false);
+  }
+}));
 
 export default passport;
