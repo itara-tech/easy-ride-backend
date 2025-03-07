@@ -6,6 +6,7 @@ import nodemailer from 'nodemailer';
 
 const prisma = new PrismaClient();
 
+
 const transporter = nodemailer.createTransport({
   host: 'live.smtp.mailtrap.io',
   port: 587,
