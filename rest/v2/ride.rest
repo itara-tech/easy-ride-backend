@@ -1,0 +1,44 @@
+@baseUrl = http://localhost:3000/api
+@token = your_token_here
+
+### Create ride request
+POST {{baseUrl}}/rides/request
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "customerId": "customer_id_here",
+  "source": {
+    "lat": 40.7128,
+    "lon": -74.0060
+  },
+  "destination": {
+    "lat": 40.7484,
+    "lon": -73.9857
+  }
+}
+
+### Accept ride
+PUT {{baseUrl}}/rides/accept
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "rideRequestId": "ride_request_id_here",
+  "driverId": "driver_id_here"
+}
+
+### Complete ride
+PUT {{baseUrl}}/rides/complete
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "tripId": "trip_id_here",
+  "finalAmount": 1500
+}
+
+### Get nearby rides
+GET {{baseUrl}}/rides/nearby?lat=40.7128&lon=-74.0060&radius=5
+Authorization: Bearer {{token}}
+

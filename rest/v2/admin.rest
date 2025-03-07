@@ -1,0 +1,24 @@
+@baseUrl = http://localhost:3000/api
+@token = your_admin_token_here
+
+### Get all users
+GET {{baseUrl}}/admin/users?userType=customer&page=1&limit=10
+Authorization: Bearer {{token}}
+
+### Get user by ID
+GET {{baseUrl}}/admin/users/customer/user_id_here
+Authorization: Bearer {{token}}
+
+### Update user status
+PUT {{baseUrl}}/admin/users/customer/user_id_here
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "isVerified": true
+}
+
+### Get system stats
+GET {{baseUrl}}/admin/stats
+Authorization: Bearer {{token}}
+

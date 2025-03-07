@@ -1,0 +1,23 @@
+@baseUrl = http://localhost:3000/api
+@token = your_token_here
+
+### Create notification
+POST {{baseUrl}}/notifications
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "userType": "customer",
+  "userId": "user_id_here",
+  "title": "New Ride Request",
+  "message": "You have a new ride request"
+}
+
+### Get user notifications
+GET {{baseUrl}}/notifications/user/user_id_here?page=1&limit=10
+Authorization: Bearer {{token}}
+
+### Mark notification as read
+PUT {{baseUrl}}/notifications/notification_id_here/read
+Authorization: Bearer {{token}}
+

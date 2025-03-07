@@ -1,0 +1,31 @@
+@baseUrl = http://localhost:3000/api
+@token = your_token_here
+
+### Process Payment
+POST {{baseUrl}}/payments/process
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "amount": 1000,
+  "phoneNumber": "250700000000"
+}
+
+### Process Refund
+POST {{baseUrl}}/payments/refund
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "amount": 1000,
+  "phoneNumber": "250700000000"
+}
+
+### Get Transactions
+GET {{baseUrl}}/payments/transactions?offset=0&limit=10
+Authorization: Bearer {{token}}
+
+### Get Account Info
+GET {{baseUrl}}/payments/account-info
+Authorization: Bearer {{token}}
+

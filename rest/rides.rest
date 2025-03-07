@@ -1,15 +1,16 @@
 @baseUrl = http://localhost:3000/api
-@customerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhlYWUxNWUwLTNjZGUtNDkxMC05NGM4LTUwYWYwMmYzNmRkOSIsInVzZXJUeXBlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3NDA3NDE1NzAsImV4cCI6MTc0MzMzMzU3MH0.SJwDQAQD79IfTc35d4vxGXnV8i-QI1L1bRq2VHUhfEw
 
-@driverToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImFmYjBmMDY1LWIwYTktNDliZC05NjM4LWYzMTJkNzQ2OGQxNSIsInVzZXJUeXBlIjoiRFJJVkVSIiwiaWF0IjoxNzQwNzQxNjE0LCJleHAiOjE3NDMzMzM2MTR9.ppCV1Ins0zrODyGCd8T0oSsH2K9S4woETgS56X-8DPM
+@customerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE2ZWVjYjc1LTQ2MTEtNGYxZC04OTMyLTRjYTY1MTUxMTJjYiIsInVzZXJUeXBlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3NDEyODE5MTYsImV4cCI6MTc0Mzg3MzkxNn0.i0mXiP5mQ_7hPvstF9q4uxOTFWEd6QiRsIec-HwWUxU
 
-@customerId = 8eae15e0-3cde-4910-94c8-50af02f36dd9
+@driverToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQzZDFhZjYzLTg3NjEtNGJhOS04MWYyLTI1Yjk2ODJjNzI0OSIsInVzZXJUeXBlIjoiRFJJVkVSIiwiaWF0IjoxNzQxMjgxOTQ1LCJleHAiOjE3NDM4NzM5NDV9.OAuY-X7woWmF0wAoIT1kHjpHsj8vyuAhu1_RCwaw4Q8
 
-@driverId = afb0f065-b0a9-49bd-9638-f312d7468d15
+@customerId = 16eecb75-4611-4f1d-8932-4ca6515112cb
 
-@vehicleId = f9e7fb4b-1028-4a35-9b0b-06bb3b94124d
+@driverId = 43d1af63-8761-4ba9-81f2-25b9682c7249
 
-@rideId = 6790a7a4-ffd1-4ab0-b22e-77dabb222a03
+@vehicleId = 
+
+@rideId = 
 
 @tripId = 
 
@@ -25,14 +26,14 @@ Authorization: Bearer {{customerToken}}
 {
     "customerId": "{{customerId}}",
     "pickupLocation": {
-        "lat": -1.9403,
-        "lon": 30.0619,
-        "address": "123 Main "
+        "lat": -2.00116,
+        "lon": 30.14428,
+        "address": "X4XV+RWV, Kigali "
     },
     "dropoffLocation": {
-        "lat": -1.9503,
-        "lon": 30.0719,
-        "address": "456 Elm St"
+        "lat": -1.94441,
+        "lon": 30.09065,
+        "address": "KG 563 St, Kigali"
     }
 }
 
