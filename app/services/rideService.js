@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { prisma } from '../Server.js';
+import { getNearestRouteDistanceRoutesAPI } from './geolocationService.js';
 
 export const createRideRequest = async (customerId, source, destination) => {
   if (!prisma) {
@@ -18,11 +19,17 @@ export const createRideRequest = async (customerId, source, destination) => {
       throw new Error('Invalid source or destination coordinates');
     }
 
-    const distance = calculateDistance(source.lat, source.lon, destination.lat, destination.lon);
+    const distanceResponse = await getNearestRouteDistanceRoutesAPI(source, destination);
+    const distance = distanceResponse ? distanceResponse.distanceKilometers : null;
+
+    console.log(distance);
+    
 
     // Validate distance calculation
+    console.log(`Distance calculated: ${distance}`);
     if (isNaN(distance) || distance < 0) {
-      console.warn(`Invalid distance calculation: 
+        console.warn(`Invalid distance calculation: Distance = ${distance}, 
+
         Source: (${source.lat}, ${source.lon}), 
         Destination: (${destination.lat}, ${destination.lon})`);
       throw new Error('Unable to calculate ride distance');
@@ -31,7 +38,10 @@ export const createRideRequest = async (customerId, source, destination) => {
     // Basic pricing calculation (adjust as needed)
     const baseRate = 5.0; // Base starting fare
     const ratePerKm = 700; // Rate per kilometer
-    const estimatedPrice = Math.max(baseRate, baseRate + distance * ratePerKm);
+    const estimatedPrice = Math.max(baseRate, baseRate + Number(distance) * ratePerKm);
+
+    console.log(estimatedPrice);
+    
 
     // Update customer's current location
     await prisma.customer.update({
