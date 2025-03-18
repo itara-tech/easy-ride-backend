@@ -41,7 +41,8 @@ export const calculateDistance = (lat1, lon1, lat2, lon2) => {
   return distance;
 };
 
-async function getNearestRouteDistanceRoutesAPI(originCoords, destinationCoords, travelMode = "DRIVE", unitSystem = "METRIC") {
+export async function getNearestRouteDistanceRoutesAPI(originCoords, destinationCoords, travelMode = "DRIVE", unitSystem = "METRIC") {
+  console.log(`Requesting distance from ${originCoords.lat}, ${originCoords.lon} to ${destinationCoords.lat}, ${destinationCoords.lon}`);
   const apiKey = process.env.GOOGLE_MAPS_API_KEY;
 
   if (!apiKey) {
@@ -59,7 +60,7 @@ async function getNearestRouteDistanceRoutesAPI(originCoords, destinationCoords,
                   location: {
                       latLng: {
                           latitude: originCoords.lat,
-                          longitude: originCoords.lng,
+                          longitude: originCoords.lon,
                       }
                   }
               },
@@ -67,7 +68,7 @@ async function getNearestRouteDistanceRoutesAPI(originCoords, destinationCoords,
                   location: {
                       latLng: {
                           latitude: destinationCoords.lat,
-                          longitude: destinationCoords.lng,
+                          longitude: destinationCoords.lon,
                       }
                   }
               },
@@ -91,6 +92,7 @@ async function getNearestRouteDistanceRoutesAPI(originCoords, destinationCoords,
           }
       );
 
+      console.log('Response from Google Maps API:', response.data);
       if (response.data.routes && response.data.routes.length > 0) {
           const route = response.data.routes[0];
           const distance = route.distanceMeters; // Distance in meters
@@ -99,10 +101,10 @@ async function getNearestRouteDistanceRoutesAPI(originCoords, destinationCoords,
           const remainingSeconds = durationSeconds % 60;
           const durationText = `${durationMinutes} minutes ${remainingSeconds} seconds`;
 
-          const distanceKilometers = (distance / 1000).toFixed(2) + " km";
+          const distanceKilometers = (distance / 1000).toFixed(2);
 
           console.log(`✅ Distance: ${distanceKilometers}, Duration: ${durationText}`);
-          return { distance: distanceKilometers};
+          return {distanceKilometers};
       } else {
           console.error("❌ No routes found:", response.data);
           return null;

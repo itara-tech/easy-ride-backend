@@ -1,8 +1,8 @@
 import prisma from "../configs/database.js"
 import {
-  processPayment as processPaypackPayment,
-  processRefund as processPaypackRefund,
-  getAccountInfo as getPaypackAccount,
+  getAccountInfo,
+  processPayment,
+  processRefund
 } from "./paypackService.js"
 
 

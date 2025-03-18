@@ -10,7 +10,7 @@ import {
 } from '../services/rideService.js';
 
 export const createRideRequestController = async (req, res) => {
-  console.log('Incoming request data:', req.body);
+  // console.log('Incoming request data:', req.body);
   try {
     const { customerId, pickupLocation, dropoffLocation } = req.body;
 

@@ -14,7 +14,7 @@
     "push": "npx prisma db push",
     "pull": "npx prisma db pull",
     "studio": "npx prisma studio",
-    "migrate": "npx prisma migrate dev",
+    "migrate": "npx prisma migrate dev ",
     "deploy": "npx prisma migrate deploy",
     "seed": "npx prisma db seed",
     "format": "npx prettier --write .",
