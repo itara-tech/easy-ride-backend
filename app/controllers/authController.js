@@ -5,6 +5,7 @@ import crypto from 'crypto';
 import { sendForgotPaswordLink, sendVerificationCode } from "../utils/emails.js";
 
 
+
 // Helper function to generate JWT token
 const generateToken = (id, userType) => {
   return jwt.sign({ id, userType }, process.env.JWT_SECRET, {
