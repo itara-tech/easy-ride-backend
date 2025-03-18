@@ -1,0 +1,89 @@
+@baseUrl = http://localhost:3000/api
+
+@customerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMzMzNiNjc0LTAxOTctNDM4MC05NTczLTcwNWI0Njk4YTgwYyIsInVzZXJUeXBlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3NDIyOTk0MDgsImV4cCI6MTc0NDg5MTQwOH0.9OHFJquXh4BNK5fDa-T9cPFv7GlKCu6HcWXB7rojuZg
+
+@driverToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNhYmI0ZWU2LTYyZGMtNGZkOS1hZTEwLTMyZmQzNjA4ZjhiMiIsInVzZXJUeXBlIjoiRFJJVkVSIiwiaWF0IjoxNzQyMjk5NDUyLCJleHAiOjE3NDQ4OTE0NTJ9.gXX5Ckox-LU9-YkVQuP1GmWcT9_c7PJXE2JvBxnzjps
+
+@customerId = 3333b674-0197-4380-9573-705b4698a80c
+
+@driverId = cabb4ee6-62dc-4fd9-ae10-32fd3608f8b2
+
+
+### Register Customer
+POST {{baseUrl}}/auth/customer/register HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "DUSHIME Aime",
+    "email": "mdonavan33@gmail.com",
+    "password": "securepassword123",
+    "phone": "+250782454192"
+}
+
+###
+
+### verify Customer
+
+POST {{baseUrl}}/auth/verify-otp-customer
+Content-Type: application/json
+
+{
+  "email": "mdonavan33@gmail.com",
+  "otp": "888794"
+}
+###
+
+### Login Customer
+POST {{baseUrl}}/auth/customer/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "email": "mdonavan33@gmail.com",
+    "password": "securepassword123"
+}
+
+###
+
+### Register Driver
+POST {{baseUrl}}/auth/driver/register HTTP/1.1
+Content-Type: application/json
+
+{
+    "name": "DUSHIME Aime",
+    "email": "mdonavan33@gmail.com",
+    "password": "securepassword123",
+    "phone": "+250782454192",
+    "licenseNumber": "DL123456"
+}
+
+###
+
+### Login Driver
+POST {{baseUrl}}/auth/driver/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "email": "mdonavan33@gmail.com",
+    "password": "securepassword123"
+}
+
+###
+
+### verify driver
+POST {{baseUrl}}/auth/verify-otp-driver
+Content-Type: application/json
+
+{
+  "email": "mdonavan33@gmail.com",
+  "otp": "123456"
+}
+
+###
+
+### forgot password
+POST {{baseUrl}}/auth/forgot-password
+Content-Type: application/json
+
+{
+  "email":"mdonavan33@gmail.com"
+}

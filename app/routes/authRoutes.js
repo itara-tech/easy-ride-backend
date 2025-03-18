@@ -5,9 +5,10 @@ import {
   loginCustomer,
   loginDriver,
   sendOTP,
-  verifyOTP,
   forgotPassword,
   resetPassword,
+  verifyOTPDriver,
+  verifyOTPcustomer,
 } from '../controllers/authController.js';
 
 const router = express.Router();
@@ -21,8 +22,8 @@ router.post('/driver/register', registerDriver);
 router.post('/driver/login', loginDriver);
 
 // OTP
-router.post('/send-otp', sendOTP);
-router.post('/verify-otp', verifyOTP);
+router.post('/verify-otp-customer', verifyOTPcustomer);
+router.post('/verify-otp-driver', verifyOTPDriver);
 
 // Password reset
 router.post('/forgot-password', forgotPassword);

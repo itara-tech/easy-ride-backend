@@ -1,4 +1,5 @@
 import { prisma } from '../Server.js';
+import { getPlaceNameFromCoords } from '../services/geolocationService.js';
 import {
   createRideRequest,
   acceptRide,
@@ -13,15 +14,31 @@ export const createRideRequestController = async (req, res) => {
   try {
     const { customerId, pickupLocation, dropoffLocation } = req.body;
 
-    // Create a new ride request
-    const rideRequest = await createRideRequest(customerId, pickupLocation, dropoffLocation);
+    // Destructuring coordinates from pickup and dropoff locations
+    const { lat: pickupLat, lon: pickupLon } = pickupLocation;
+    const { lat: dropoffLat, lon: dropoffLon } = dropoffLocation;
 
-    // const trip = await prisma.trip.create({
-    //   data: {
-    //     rideRequestId: rideRequest.id,
-    //     status: 'STARTED'
-    //   }
-    // });
+    // Get place names for both pickup and dropoff locations
+    const pickupPlace = await getPlaceNameFromCoords(pickupLat, pickupLon);
+    const dropoffPlace = await getPlaceNameFromCoords(dropoffLat, dropoffLon);
+
+    // Update the location objects with the new addresses
+    const updatedPickupLocation = {
+      lat: pickupLat,
+      lon: pickupLon,
+      address: pickupPlace || pickupLocation.address // Fallback to original address if reverse geocoding fails
+    };
+
+    const updatedDropoffLocation = {
+      lat: dropoffLat,
+      lon: dropoffLon,
+      address: dropoffPlace || dropoffLocation.address // Fallback to original address if reverse geocoding fails
+    };
+
+    // Create a new ride request
+    const rideRequest = await createRideRequest(customerId, updatedPickupLocation, updatedDropoffLocation);
+
+
 
     res.status(201).json({ rideRequest });
   } catch (error) {

@@ -110,6 +110,7 @@ export const acceptRide = async (rideRequestId, driverId) => {
 };
 
 export const completeRide = async (rideId, finalAmount) => {
+
   if (!prisma) {
     throw new Error('Prisma client not initialized');
   }
@@ -128,6 +129,10 @@ export const completeRide = async (rideId, finalAmount) => {
       return { message: 'Ride is already completed', existingTrip };
     }
 
+    //creating a payment for trip
+
+
+
     const rideComplete = await prisma.rideComplete.create({
       data: {
         tripId: existingTrip.id,
@@ -135,6 +140,8 @@ export const completeRide = async (rideId, finalAmount) => {
         completedAt: new Date(),
       },
     });
+
+    // const paymentForcustomer
 
     // Update the trip status to completed
     const updatedTrip = await prisma.trip.update({

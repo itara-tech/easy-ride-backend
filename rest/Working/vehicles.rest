@@ -1,13 +1,14 @@
 @baseUrl = http://localhost:3000/api
-@customerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhlYWUxNWUwLTNjZGUtNDkxMC05NGM4LTUwYWYwMmYzNmRkOSIsInVzZXJUeXBlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3NDA3NDE1NzAsImV4cCI6MTc0MzMzMzU3MH0.SJwDQAQD79IfTc35d4vxGXnV8i-QI1L1bRq2VHUhfEw
 
-@driverToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImFmYjBmMDY1LWIwYTktNDliZC05NjM4LWYzMTJkNzQ2OGQxNSIsInVzZXJUeXBlIjoiRFJJVkVSIiwiaWF0IjoxNzQwNzQxNjE0LCJleHAiOjE3NDMzMzM2MTR9.ppCV1Ins0zrODyGCd8T0oSsH2K9S4woETgS56X-8DPM
+@customerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRjNTRkZDJkLTgzYjQtNGM3Ny1iMzI4LTlmMTg2ZTAwODYyNiIsInVzZXJUeXBlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3NDIyOTg1NDksImV4cCI6MTc0NDg5MDU0OX0.WuWrfXK7OsOh9z_uuIkZCBCoFizl3rcVRB-tfklpbAY
 
-@customerId = 8eae15e0-3cde-4910-94c8-50af02f36dd9
+@driverToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMzE4M2RmLTExOGYtNDc1Ni05ODUwLTVjOGUyM2VkN2VjNSIsInVzZXJUeXBlIjoiRFJJVkVSIiwiaWF0IjoxNzQyMjk4NTEwLCJleHAiOjE3NDQ4OTA1MTB9.uo08Bk1JP6CFcl_KnRbGaN9imGrbde_uIciQVhHh1Hk
 
-@driverId = afb0f065-b0a9-49bd-9638-f312d7468d15
+@customerId = dc54dd2d-83b4-4c77-b328-9f186e008626
 
-@vehicleId = 33fbe171-1fef-4796-9929-e5b5618cb376
+@driverId = 6a3183df-118f-4756-9850-5c8e23ed7ec5
+
+@vehicleId = 60610470-7be6-4127-bb3e-462657905fbe
 
 
 
@@ -21,7 +22,7 @@ Content-Type: application/json
 {
   "driverId": "{{driverId}}",
   "type": "CAR",
-  "regNo": "ABC9123",
+  "regNo": "RAC 456",
   "model": "Camry",
   "color": "Gold"
 }
