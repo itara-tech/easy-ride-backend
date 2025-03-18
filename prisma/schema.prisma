@@ -26,7 +26,9 @@ model Customer {
   trips           Trip[]
   chatrooms       ChatRoom[]
   wallet          Wallet?
-  messages   Message[]
+  messages        Message[]
+  payments        Payment[]
+  refunds         Refund[]
 }
 
 model Driver {
@@ -51,7 +53,7 @@ model Driver {
   vehicles        Vehicle[]
   chatrooms       ChatRoom[]
   wallet          Wallet?
-  messages   Message[]
+  messages        Message[]
 }
 
 model Vehicle {
@@ -90,22 +92,68 @@ model RideAccept {
 }
 
 model Trip {
-  id             String          @id @default(uuid())
-  customerId     String
-  driverId       String
-  requestId      String          @unique
-  status         RideStatus
-  source         Json
-  destination    Json
-  paymentStatus  PaymentStatus
-  createdAt      DateTime        @default(now())
-  customerRating CustomerRating?
-  driverRating   DriverRating?
-  rideCancel     RideCancel?
-  rideComplete   RideComplete?
-  customer       Customer        @relation(fields: [customerId], references: [id])
-  driver         Driver          @relation(fields: [driverId], references: [id])
-  request        RideRequest     @relation(fields: [requestId], references: [id])
+  id               String          @id @default(uuid())
+  customerId       String
+  driverId         String
+  requestId        String          @unique
+  status           RideStatus
+  source           Json
+  destination      Json
+  createdAt        DateTime        @default(now())
+  customerRating   CustomerRating?
+  driverRating     DriverRating?
+  rideCancel       RideCancel?
+  rideComplete     RideComplete?
+  paymentStatus    PaymentStatus   @default(PENDING)
+  paymentReference String?
+  paymentGateway   PaymentGateway? // PAYPACK or SIMPLE
+  paymentMethod    PaymentMethod   @default(MOMO)
+  customer         Customer        @relation(fields: [customerId], references: [id])
+  driver           Driver          @relation(fields: [driverId], references: [id])
+  request          RideRequest     @relation(fields: [requestId], references: [id])
+  payments         Payment[]
+  refunds          Refund[]
+}
+
+model Payment {
+  id          String         @id @default(uuid())
+  reference   String         @unique
+  amount      Float
+  phoneNumber String?
+  description String?
+  method      PaymentMethod
+  status      PaymentStatus
+  tripId      String
+  trip        Trip           @relation(fields: [tripId], references: [id])
+  customerId  String
+  customer    Customer       @relation(fields: [customerId], references: [id])
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model Refund {
+  id          String        @id @default(uuid())
+  reference   String        @unique
+  amount      Float
+  reason      String?
+  status      PaymentStatus
+  tripId      String
+  trip        Trip          @relation(fields: [tripId], references: [id])
+  customerId  String
+  customer    Customer      @relation(fields: [customerId], references: [id])
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+enum PaymentGateway {
+  PAYPACK
+  SIMPLE
+}
+
+enum PaymentMethod {
+  MOMO
+  CARD
+  CASH
 }
 
 model RideComplete {
@@ -134,34 +182,32 @@ model Notification {
   createdAt  DateTime  @default(now())
   customerId String?
   driverId   String?
-  customer   Customer? @relation(fields: [customerId], references: [id], map: "Notification_customer_fkey")
-  driver     Driver?   @relation(fields: [driverId], references: [id], map: "Notification_driver_fkey")
+  customer   Customer? @relation(fields: [customerId], references: [id])
+  driver     Driver?   @relation(fields: [driverId], references: [id])
 }
 
 model OTP {
   id         String    @id @default(uuid())
-  userType   UserType
-  userId     String
   code       String
   isVerified Boolean   @default(false)
   expiresAt  DateTime
   createdAt  DateTime  @default(now())
   customerId String?
   driverId   String?
-  customer   Customer? @relation(fields: [customerId], references: [id], map: "OTP_customer_fkey")
-  driver     Driver?   @relation(fields: [driverId], references: [id], map: "OTP_driver_fkey")
+  customer   Customer? @relation(fields: [customerId], references: [id])
+  driver     Driver?   @relation(fields: [driverId], references: [id])
 }
 
 model PasswordReset {
   id        String   @id @default(uuid())
-  userType  UserType
-  userId    String
+  customerId String?
+  driverId   String?
   token     String
   isUsed    Boolean  @default(false)
   expiresAt DateTime
   createdAt DateTime @default(now())
-  customer  Customer @relation(fields: [userId], references: [id], map: "PasswordReset_customer_fkey")
-  driver    Driver   @relation(fields: [userId], references: [id], map: "PasswordReset_driver_fkey")
+  customer  Customer? @relation(fields: [customerId], references: [id])
+  driver    Driver?   @relation(fields: [driverId], references: [id])
 }
 
 model CustomerRating {
@@ -215,8 +261,8 @@ model ChatRoom {
 model Message {
   id         String    @id @default(uuid())
   chatRoomId String
-  customerId String?   // Optional foreign key for Customer
-  driverId   String?   // Optional foreign key for Driver
+  customerId String?   
+  driverId   String?   
   content    String
   createdAt  DateTime  @default(now())
   chatRoom   ChatRoom  @relation(fields: [chatRoomId], references: [id])
@@ -228,6 +274,7 @@ enum PaymentStatus {
   PENDING
   SUCCESS
   FAILED
+  REFUNDED
 }
 
 enum RideStatus {
@@ -249,3 +296,4 @@ enum UserType {
   CUSTOMER
   DRIVER
 }
+

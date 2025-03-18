@@ -1,24 +1,10 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from "../configs/database.js"
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import nodemailer from 'nodemailer';
-
-const prisma = new PrismaClient();
+import { sendForgotPaswordLink, sendVerificationCode } from "../utils/emails.js";
 
 
-const transporter = nodemailer.createTransport({
-  host: 'live.smtp.mailtrap.io',
-  port: 587,
-  auth: {
-    user: 'apismtp@mailtrap.io',
-    pass: '********a928',
-  },
-  secure: false,
-  tls: {
-    rejectUnauthorized: false,
-  },
-});
 
 // Helper function to generate JWT token
 const generateToken = (id, userType) => {
@@ -32,24 +18,6 @@ const generateOTP = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
-// Helper function to send email
-const sendEmail = async (to, subject, text) => {
-  const mailOptions = {
-    from: 'apismtp@mailtrap.io',
-    to,
-    subject,
-    text,
-  };
-
-  try {
-    const info = await transporter.sendMail(mailOptions);
-    console.log('Email sent:', info.response);
-    return true;
-  } catch (error) {
-    console.error('Error sending email:', error);
-    return false;
-  }
-};
 
 // Register Customer
 export const registerCustomer = async (req, res) => {
@@ -69,6 +37,10 @@ export const registerCustomer = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
+    const verificationCode = generateOTP()
+
+    sendVerificationCode(email, verificationCode)
+
     // Create customer
     const customer = await prisma.customer.create({
       data: {
@@ -76,8 +48,17 @@ export const registerCustomer = async (req, res) => {
         email,
         password: hashedPassword,
         phone,
+        otps:{
+          create: {
+            code:verificationCode,
+            expiresAt: new Date(Date.now() + 30 * 60 * 1000),
+            isVerified:false
+          }
+        }
       },
     });
+
+    await sendVerificationCode(email, verificationCode)
 
     if (customer) {
       res.status(201).json({
@@ -86,6 +67,7 @@ export const registerCustomer = async (req, res) => {
         email: customer.email,
         phone: customer.phone,
         token: generateToken(customer.id, 'CUSTOMER'),
+        otp: customer.otps
       });
     }
   } catch (error) {
@@ -111,6 +93,10 @@ export const registerDriver = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
+    const verificationCode = generateOTP()
+
+    sendVerificationCode(email, verificationCode)
+
     // Create driver
     const driver = await prisma.driver.create({
       data: {
@@ -119,8 +105,17 @@ export const registerDriver = async (req, res) => {
         password: hashedPassword,
         phone,
         licenseNumber,
+        otps:{
+          create: {
+            code:verificationCode,
+            expiresAt: new Date(Date.now() + 30 * 60 * 1000),
+            isVerified:false
+          }
+        }
       },
     });
+
+    await sendVerificationCode(email, verificationCode)
 
     if (driver) {
       res.status(201).json({
@@ -255,14 +250,16 @@ export const sendOTP = async (req, res) => {
 };
 
 // Verify OTP
-export const verifyOTP = async (req, res) => {
+export const verifyOTPcustomer = async (req, res) => {
   try {
-    const { email, userType, otp } = req.body;
+    const { otp, email } = req.body;
 
     // Find user
-    const user = await prisma[userType.toLowerCase()].findUnique({
-      where: { email },
-    });
+    const user = await prisma.customer.findUnique({
+      where: {
+        email,
+      }
+    })
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -271,14 +268,9 @@ export const verifyOTP = async (req, res) => {
     // Find valid OTP
     const validOTP = await prisma.oTP.findFirst({
       where: {
-        userId: user.id,
-        userType,
+        customerId: user.id,  // Assuming customerId is the foreign key in the OTP table
         code: otp,
-        isVerified: false,
-        expiresAt: {
-          gt: new Date(),
-        },
-      },
+      }
     });
 
     if (!validOTP) {
@@ -292,7 +284,52 @@ export const verifyOTP = async (req, res) => {
     });
 
     // Mark user as verified
-    await prisma[userType.toLowerCase()].update({
+    await prisma.customer.update({
+      where: { email },
+      data: { isVerified: true },
+    });
+
+    res.json({ message: 'OTP verified successfully' });
+  } catch (error) {
+    console.error('Verify OTP error:', error);
+    res.status(400).json({ message: 'Failed to verify OTP', error: error.message });
+  }
+};
+export const verifyOTPDriver = async (req, res) => {
+  try {
+    const { otp, email } = req.body;
+
+    // Find user
+    const user = await prisma.customer.findUnique({
+      where: {
+        email,
+      }
+    })
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Find valid OTP
+    const validOTP = await prisma.oTP.findFirst({
+      where: {
+        customerId: user.id,  // Assuming customerId is the foreign key in the OTP table
+        code: otp,
+      }
+    });
+
+    if (!validOTP) {
+      return res.status(400).json({ message: 'Invalid or expired OTP' });
+    }
+
+    // Mark OTP as verified
+    await prisma.oTP.update({
+      where: { id: validOTP.id },
+      data: { isVerified: true },
+    });
+
+    // Mark user as verified
+    await prisma.driver.update({
       where: { id: user.id },
       data: { isVerified: true },
     });
@@ -303,23 +340,28 @@ export const verifyOTP = async (req, res) => {
     res.status(400).json({ message: 'Failed to verify OTP', error: error.message });
   }
 };
-
 // Request password reset
 export const forgotPassword = async (req, res) => {
   try {
-    const { email, userType } = req.body;
+    const { email } = req.body;
 
-    // Find user
-    const user = await prisma[userType.toLowerCase()].findUnique({
-      where: { email },
-    });
+    // Check if the user exists in either table
+    let user = await prisma.customer.findUnique({ where: { email } });
+    let userType = "customer";
+    let userIdField = "customerId";
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      user = await prisma.driver.findUnique({ where: { email } });
+      userType = "driver";
+      userIdField = "driverId";
+    }
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
 
     // Generate reset token
-    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetToken = crypto.randomBytes(32).toString("hex");
     const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
 
     // Save reset token
@@ -327,29 +369,26 @@ export const forgotPassword = async (req, res) => {
       data: {
         token: resetToken,
         expiresAt,
-        userType,
-        userId: user.id,
+        [userIdField]: user.id,
       },
     });
 
     // Send reset email
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}&userType=${userType}`;
-    const emailSent = await sendEmail(
-      email,
-      'Password Reset Request',
-      `Click the following link to reset your password: ${resetUrl}\nThis link will expire in 1 hour.`,
-    );
+    await sendForgotPaswordLink(user.email,resetUrl)
 
-    if (!emailSent) {
-      return res.status(500).json({ message: 'Failed to send reset email' });
-    }
+  
 
-    res.json({ message: 'Password reset email sent successfully' });
+    res.json({ message: "Password reset email sent successfully" });
   } catch (error) {
-    console.error('Forgot password error:', error);
-    res.status(400).json({ message: 'Failed to process password reset', error: error.message });
+    console.error("Forgot password error:", error);
+    res.status(400).json({
+      message: "Failed to process password reset",
+      error: error.message,
+    });
   }
 };
+
 
 // Reset password
 export const resetPassword = async (req, res) => {

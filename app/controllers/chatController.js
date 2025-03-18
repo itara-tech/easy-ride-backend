@@ -1,3 +1,4 @@
+import prisma from '../configs/database.js';
 import * as chatService from '../services/chatService.js';
 
 // Create a chat room
@@ -23,6 +24,17 @@ export const sendMessage = async (req, res) => {
 
   if (!chatRoomId || !senderId || !content) {
     return res.status(400).json({ error: 'chatRoomId, senderId, and content are required' });
+  }
+
+  const chatRoom = await prisma.chatRoom.findUnique({
+    where: {
+      id: chatRoomId
+    }
+  });
+  
+  
+  if (!chatRoom) {
+    throw new Error('ChatRoom not found');
   }
 
   try {

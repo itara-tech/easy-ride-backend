@@ -11,13 +11,43 @@ export const createChatRoom = async (customerId, driverId) => {
 };
 
 export const createMessage = async (chatRoomId, senderId, content) => {
+  // Determine if senderId belongs to customer or driver
+  const chatRoom = await prisma.chatRoom.findUnique({
+    where: {
+      id: chatRoomId
+    },
+    include: {
+      customer: true,
+      driver: true
+    }
+  });
+
+  if (!chatRoom) {
+    throw new Error('ChatRoom not found');
+  }
+
+  // Check if senderId matches either customer or driver ID
+  let customerId = null;
+  let driverId = null;
+
+  if (chatRoom.customer && chatRoom.customer.id === senderId) {
+    customerId = senderId;
+  } else if (chatRoom.driver && chatRoom.driver.id === senderId) {
+    driverId = senderId;
+  } else {
+    throw new Error('Invalid senderId. Sender must be either the customer or driver.');
+  }
+
+  // Create the message
   const message = await prisma.message.create({
     data: {
       chatRoomId,
-      senderId,
-      content,
-    },
+      customerId, // Only pass customerId if it exists
+      driverId,   // Only pass driverId if it exists
+      content
+    }
   });
+
   return message;
 };
 

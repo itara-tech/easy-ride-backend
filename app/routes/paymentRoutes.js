@@ -1,21 +1,29 @@
-import express from 'express';
-import { authenticate, isCustomer, isDriver } from '../middleware/auth.js';
+import express from "express"
+import { authenticate, isCustomer } from "../middleware/auth.js"
+import {
+  createPayment,
+  getPaymentHistory,
+  refundPayment,
+  getPaymentStatus,
+  getAccountDetails,
+} from "../controllers/paymentController.js"
 
-const router = express.Router();
+const router = express.Router()
 
-router.post('/create', authenticate, isCustomer, (req, res) => {
-  // TODO: Implement payment creation logic
-  res.status(501).json({ message: 'Payment creation not implemented yet' });
-});
+// Create a new payment (works with all gateways)
+router.post("/create", authenticate, isCustomer, createPayment)
 
-router.get('/history', authenticate, (req, res) => {
-  // TODO: Implement payment history retrieval
-  res.status(501).json({ message: 'Payment history retrieval not implemented yet' });
-});
+// Get payment history (works with all gateways)
+router.get("/history", authenticate, getPaymentHistory)
 
-router.post('/refund', authenticate, isCustomer, (req, res) => {
-  // TODO: Implement payment refund logic
-  res.status(501).json({ message: 'Payment refund not implemented yet' });
-});
+// Process a refund (works with all gateways)
+router.post("/refund", authenticate, isCustomer, refundPayment)
 
-export default router;
+// Check payment status (works with all gateways)
+router.get("/status/:reference", authenticate, getPaymentStatus)
+
+// Account information
+router.get("/account", authenticate, getAccountDetails)
+
+export default router
+

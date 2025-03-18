@@ -19,6 +19,7 @@ import chatRoutes from './routes/chatRoutes.js';
 import './configs/passport.js';
 import { PrismaClient } from '@prisma/client';
 import { setupSocketHandlers } from './middleware/socketHandlers.js';
+import { initPaypack } from './services/paypackService.js';
 
 dotenv.config();
 
@@ -40,7 +41,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/chat', chatRoutes);
 
-// app.use("/api/payments", paymentRoutes)
+app.use("/api/payments", paymentRoutes)
 app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/rides', rideRoutes);
 
@@ -56,6 +57,14 @@ prisma
   .catch((error) => {
     console.error('Failed to connect to the database:', error);
   });
+
+initPaypack().then((success) => {
+  if (success) {
+    console.log("PayPack initialized successfully")
+  } else {
+    console.error("Failed to initialize PayPack")
+  }
+})
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
