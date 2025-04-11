@@ -1,60 +1,163 @@
 @baseUrl = http://localhost:3000/api
+@contentType = application/json
 
-@customerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMzMzNiNjc0LTAxOTctNDM4MC05NTczLTcwNWI0Njk4YTgwYyIsInVzZXJUeXBlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3NDIyOTk0MDgsImV4cCI6MTc0NDg5MTQwOH0.9OHFJquXh4BNK5fDa-T9cPFv7GlKCu6HcWXB7rojuZg
+@customerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjkyY2FkMGVjLTNmMzctNDY3OS05MTQ0LWJhMTBhY2E5ODA5NSIsInVzZXJUeXBlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3NDQyOTk4ODYsImV4cCI6MTc0Njg5MTg4Nn0.MzPmzpO47HFG2Rm0sUF0K2f8c3EQTVSBv4clEe8qSI8
 
-@driverToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNhYmI0ZWU2LTYyZGMtNGZkOS1hZTEwLTMyZmQzNjA4ZjhiMiIsInVzZXJUeXBlIjoiRFJJVkVSIiwiaWF0IjoxNzQyMjk5NDUyLCJleHAiOjE3NDQ4OTE0NTJ9.gXX5Ckox-LU9-YkVQuP1GmWcT9_c7PJXE2JvBxnzjps
+@driverToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImExYzhjODc1LTMzOWUtNDBiYy05ZGM3LTdhZTczMDc5N2Q4NiIsInVzZXJUeXBlIjoiRFJJVkVSIiwiaWF0IjoxNzQ0Mjk5OTQwLCJleHAiOjE3NDY4OTE5NDB9.K5Yt7ZVgHWXtgggFn0h3zoHG8pz89rIoP7BpryES7Ko
 
-@customerId = 3333b674-0197-4380-9573-705b4698a80c
+@customerId = 92cad0ec-3f37-4679-9144-ba10aca98095
 
-@driverId = cabb4ee6-62dc-4fd9-ae10-32fd3608f8b2
+@driverId = a1c8c875-339e-40bc-9dc7-7ae730797d86
 
+# Ride Request ID
+@rideRequestId = 6a02000c-0e47-4c1f-825c-85f046446c7f
 
-@chatRoomId = d1e1b011-4162-4e78-9c29-b8a45782059e
+@chatRoom = 3fc20380-17dd-43ca-80c2-e7a6ebb47daf
 
-@messageId =
+### --------------------------
+### 1. CHAT ROOM MANAGEMENT
+### --------------------------
 
-
-
-
-### Create chat room (Customer initiates)
-POST {{baseUrl}}/chat/room HTTP/1.1
+### 1.1 Create a new chat room (Customer initiates)
+# @name createChatRoom
+POST {{baseUrl}}/chat/room
 Authorization: Bearer {{customerToken}}
-Content-Type: application/json
+Content-Type: {{contentType}}
 
 {
   "customerId": "{{customerId}}",
-  "driverId": "{{driverId}}"
+  "driverId": "{{driverId}}",
+  "rideRequestId": "{{rideRequestId}}"
 }
 
-### Send a message (Customer sends a message)
-POST {{baseUrl}}/chat/message HTTP/1.1
+### 1.2 Try to create duplicate chat room (should return existing one)
+POST {{baseUrl}}/chat/room
 Authorization: Bearer {{customerToken}}
-Content-Type: application/json
+Content-Type: {{contentType}}
 
 {
-  "chatRoomId": "{{chatRoomId}}", 
-  "senderId": "{{customerId}}",
-  "content": "Hello, this is a message from the customer!"
+  "customerId": "{{customerId}}",
+  "driverId": "{{driverId}}",
+  "rideRequestId": "{{rideRequestId}}"
 }
 
-### Send a message (Driver sends a message)
-POST {{baseUrl}}/chat/message HTTP/1.1
+### Store the chatRoomId from the response
+@chatRoomId = 3fc20380-17dd-43ca-80c2-e7a6ebb47daf
+
+### --------------------------
+### 2. MESSAGING
+### --------------------------
+
+### 2.1 Send a regular message (Customer)
+# @name customerMessage
+POST {{baseUrl}}/chat/message
+Authorization: Bearer {{customerToken}}
+Content-Type: {{contentType}}
+
+{
+  "chatRoomId": "{{chatRoomId}}",
+  "senderId": "{{customerId}}",
+  "content": "Hello driver, I need a ride from Main Street to Downtown"
+}
+
+### 2.2 Send a price offer (Driver)
+# @name priceOffer
+POST {{baseUrl}}/chat/message
 Authorization: Bearer {{driverToken}}
-Content-Type: application/json
+Content-Type: {{contentType}}
 
 {
   "chatRoomId": "{{chatRoomId}}",
   "senderId": "{{driverId}}",
-  "content": "Hello, this is a message from the driver!"
+  "content": "I can do this ride for",
+  "priceOffer": 1500
 }
 
+### Store the price offer message ID
+@priceOfferMessageId = {{priceOffer.response.body.id}}
 
-### Fetch messages in a chat room (Customer fetches messages)
-GET {{baseUrl}}/chat/messages/{{chatRoomId}} HTTP/1.1
+### 2.3 Send a counter offer (Customer)
+POST {{baseUrl}}/chat/message
 Authorization: Bearer {{customerToken}}
-Content-Type: application/json
+Content-Type: {{contentType}}
 
-### Fetch messages with pagination (Customer fetches messages)
-GET {{baseUrl}}/chat/messages/{{chatRoomId}}?page=1&limit=10 HTTP/1.1
+{
+  "chatRoomId": "{{chatRoomId}}",
+  "senderId": "{{customerId}}",
+  "content": "How about this price instead?",
+  "priceOffer": 1200
+}
+
+### --------------------------
+### 3. PRICE NEGOTIATION
+### --------------------------
+
+### 3.1 Accept a price offer (Customer accepts driver's offer)
+POST {{baseUrl}}/chat/accept-offer
 Authorization: Bearer {{customerToken}}
-Content-Type: application/json
+Content-Type: {{contentType}}
+
+{
+  "messageId": "{{priceOfferMessageId}}",
+  "acceptorId": "{{customerId}}"
+}
+
+### 3.2 Handle price regret (Driver regrets)
+POST {{baseUrl}}/chat/regret
+Authorization: Bearer {{driverToken}}
+Content-Type: {{contentType}}
+
+{
+  "chatRoomId": "{{chatRoomId}}",
+  "regretterId": "{{driverId}}"
+}
+
+### --------------------------
+### 4. MESSAGE RETRIEVAL
+### --------------------------
+
+### 4.1 Get all messages in chat room
+GET {{baseUrl}}/chat/messages/{{chatRoomId}}
+Authorization: Bearer {{customerToken}}
+Content-Type: {{contentType}}
+
+### 4.2 Get messages with pagination (page 1, 10 messages)
+GET {{baseUrl}}/chat/messages/{{chatRoomId}}?page=1&limit=10
+Authorization: Bearer {{customerToken}}
+Content-Type: {{contentType}}
+
+### --------------------------
+### 5. ERROR CASES
+### --------------------------
+
+### 5.1 Try to create chat room with invalid data
+POST {{baseUrl}}/chat/room
+Authorization: Bearer {{customerToken}}
+Content-Type: {{contentType}}
+
+{
+  "customerId": "invalid-id",
+  "driverId": "{{driverId}}",
+  "rideRequestId": "{{rideRequestId}}"
+}
+
+### 5.2 Try to send empty message
+POST {{baseUrl}}/chat/message
+Authorization: Bearer {{customerToken}}
+Content-Type: {{contentType}}
+
+{
+  "chatRoomId": "{{chatRoomId}}",
+  "senderId": "{{customerId}}",
+  "content": ""
+}
+
+### 5.3 Try to accept non-existent offer
+POST {{baseUrl}}/chat/accept-offer
+Authorization: Bearer {{customerToken}}
+Content-Type: {{contentType}}
+
+{
+  "messageId": "non-existent-id",
+  "acceptorId": "{{customerId}}"
+}

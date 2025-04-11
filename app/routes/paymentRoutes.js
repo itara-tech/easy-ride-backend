@@ -1,29 +1,79 @@
-import express from "express"
-import { authenticate, isCustomer } from "../middleware/auth.js"
-import {
-  createPayment,
+import express from "express";
+import { authenticate, isCustomer } from "../middleware/auth.js";
+import { 
+  createPayment, 
   getPaymentHistory,
   refundPayment,
   getPaymentStatus,
   getAccountDetails,
-} from "../controllers/paymentController.js"
+  verifyPayment,
+  exportPaymentHistory
+} from "../controllers/paymentController.js";
+import { 
+  validatePayment, 
+  validateRefund,
+  validateStatusCheck,
+  validatePaymentHistory,
+  validateWebhook
+} from "../validators/paymentValidator.js";
 
-const router = express.Router()
+const router = express.Router();
 
-// Create a new payment (works with all gateways)
-router.post("/create", authenticate, isCustomer, createPayment)
+// Payment creation
+router.post(
+  "/create",
+  authenticate,
+  (req, res, next) => validatePayment(req.body, res, next),
+  createPayment
+);
 
-// Get payment history (works with all gateways)
-router.get("/history", authenticate, getPaymentHistory)
+// Payment verification (webhook)
+router.post(
+  "/verify",
+  (req, res, next) => validateWebhook(req.body, res, next),
+  verifyPayment
+);
 
-// Process a refund (works with all gateways)
-router.post("/refund", authenticate, isCustomer, refundPayment)
+// Get payment history
+router.get(
+  "/history",
+  authenticate,
+  (req, res, next) => validatePaymentHistory(req.query, res, next),
+  getPaymentHistory
+);
 
-// Check payment status (works with all gateways)
-router.get("/status/:reference", authenticate, getPaymentStatus)
+// Export payment history
+router.get(
+  "/history/export",
+  authenticate,
+  exportPaymentHistory
+);
+
+// Process refund
+router.post(
+  "/refund",
+  authenticate,
+  isCustomer,
+  (req, res, next) => validateRefund(req.body, res, next),
+  refundPayment
+);
+
+// Check payment status
+router.get(
+  "/status/:reference",
+  authenticate,
+  (req, res, next) => validateStatusCheck({ 
+    ...req.params, 
+    ...req.query 
+  }, res, next),
+  getPaymentStatus
+);
 
 // Account information
-router.get("/account", authenticate, getAccountDetails)
+router.get(
+  "/account",
+  authenticate,
+  getAccountDetails
+);
 
-export default router
-
+export default router;

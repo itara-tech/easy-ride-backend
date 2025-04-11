@@ -21,13 +21,15 @@
     "release:semantic-release": "npx semantic-release"
   },
   "dependencies": {
-    "@prisma/client": "^6.4.1",
+    "@prisma/client": "^6.6.0",
     "axios": "^1.8.1",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
+    "exceljs": "^4.4.0",
     "express": "^4.21.2",
+    "express-validator": "^7.2.1",
     "helmet": "^8.0.0",
     "http": "^0.0.1-security",
     "joi": "^17.13.3",
@@ -42,7 +44,6 @@
     "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.1",
     "paypack-js": "^0.2.1",
-    "prisma": "^6.4.1",
     "socket.io": "^4.8.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
@@ -56,6 +57,7 @@
     "husky": "^9.1.7",
     "prettier": "3.5.3",
     "pretty-quick": "^4.1.1",
+    "prisma": "^6.6.0",
     "semantic-release": "^24.2.3",
     "semantic-release-ado": "^1.4.0"
   },
