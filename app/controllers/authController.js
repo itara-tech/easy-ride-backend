@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { sendForgotPaswordLink, sendVerificationCode } from "../utils/emails.js";
+import { sendsmsOTP } from "../services/smsService.js";
 
 
 // Helper function to generate JWT token
@@ -38,7 +39,8 @@ export const registerCustomer = async (req, res) => {
 
     const verificationCode = generateOTP()
 
-    sendVerificationCode(email, verificationCode)
+    // sendVerificationCode(email, verificationCode)
+    await sendsmsOTP(phone, verificationCode)
 
     // Create customer
     const customer = await prisma.customer.create({
@@ -57,7 +59,7 @@ export const registerCustomer = async (req, res) => {
       },
     });
 
-    await sendVerificationCode(email, verificationCode)
+    // await sendVerificationCode(email, verificationCode)
 
     if (customer) {
       res.status(201).json({
@@ -94,7 +96,8 @@ export const registerDriver = async (req, res) => {
 
     const verificationCode = generateOTP()
 
-    sendVerificationCode(email, verificationCode)
+    // sendVerificationCode(email, verificationCode)
+    await  sendsmsOTP(phone, verificationCode)
 
     // Create driver
     const driver = await prisma.driver.create({
@@ -114,7 +117,7 @@ export const registerDriver = async (req, res) => {
       },
     });
 
-    await sendVerificationCode(email, verificationCode)
+    // await sendVerificationCode(email, verificationCode)
 
     if (driver) {
       res.status(201).json({

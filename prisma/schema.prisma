@@ -80,6 +80,7 @@ model RideRequest {
   rideAccept     RideAccept?
   customer       Customer    @relation(fields: [customerId], references: [id])
   trip           Trip?
+  chatRoom       ChatRoom?
 }
 
 model RideAccept {
@@ -251,25 +252,30 @@ model Wallet {
 }
 
 model ChatRoom {
-  id         String    @id @default(uuid())
-  customerId String
-  driverId   String
-  driver     Driver    @relation(fields: [driverId], references: [id])
-  customer   Customer  @relation(fields: [customerId], references: [id])
-  createdAt  DateTime  @default(now())
-  messages   Message[]
+  id            String       @id @default(uuid())
+  customerId    String
+  driverId      String
+  rideRequestId String       @unique
+  driver        Driver       @relation(fields: [driverId], references: [id])
+  customer      Customer     @relation(fields: [customerId], references: [id])
+  rideRequest   RideRequest  @relation(fields: [rideRequestId], references: [id])
+  createdAt     DateTime     @default(now())
+  messages      Message[]
 }
 
 model Message {
-  id         String    @id @default(uuid())
-  chatRoomId String
-  customerId String?   
-  driverId   String?   
-  content    String
-  createdAt  DateTime  @default(now())
-  chatRoom   ChatRoom  @relation(fields: [chatRoomId], references: [id])
-  customer   Customer? @relation(fields: [customerId], references: [id]) // Optional relation to Customer
-  driver     Driver?   @relation(fields: [driverId], references: [id])   // Optional relation to Driver
+  id            String     @id @default(uuid())
+  chatRoomId    String
+  customerId    String?   
+  driverId      String?   
+  content       String
+  priceOffer    Float?
+  isPriceAccepted Boolean  @default(false)
+  isRegret      Boolean   @default(false)
+  createdAt     DateTime   @default(now())
+  chatRoom      ChatRoom   @relation(fields: [chatRoomId], references: [id])
+  customer      Customer?  @relation(fields: [customerId], references: [id])
+  driver        Driver?    @relation(fields: [driverId], references: [id])
 }
 
 enum PaymentStatus {

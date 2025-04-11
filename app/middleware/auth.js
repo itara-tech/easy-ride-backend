@@ -7,7 +7,9 @@ const prisma = new PrismaClient();
 
 // to authenticate JWT token
 export const authenticateToken = passport.authenticate('jwt', { session: false });
+
 export const authenticate = authenticateToken;
+console.log(authenticate);
 
 
 // to check if user is a customer

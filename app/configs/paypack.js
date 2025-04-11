@@ -1,10 +1,10 @@
 require('dotenv').config(); 
 
-const PaypackJs = require('paypack-js').default; // Import PayPack library
+const PaypackJs = require('paypack-js').default; 
 
 let paypackClient = null;
 
-// Initialize PayPack with your credentials
+
 const initPaypack = async () => {
   try {
     paypackClient = new PaypackJs({
@@ -20,7 +20,7 @@ const initPaypack = async () => {
   }
 };
 
-// Process Payment (Cash-in) from Customer
+
 const processCashIn = async (amount, phoneNumber) => {
   if (!paypackClient) {
     await initPaypack();
@@ -29,8 +29,8 @@ const processCashIn = async (amount, phoneNumber) => {
   try {
     const environment = process.env.NODE_ENV === "production" ? "production" : "development";
     const response = await paypackClient.cashin({
-      number: phoneNumber, // Customer phone number
-      amount: amount, // Amount to be paid by customer
+      number: phoneNumber, 
+      amount: amount, 
       environment: environment,
     });
 
@@ -47,7 +47,7 @@ const processCashIn = async (amount, phoneNumber) => {
   }
 };
 
-// Process Cash-out (transfer money to driver)
+
 const processCashOut = async (amount, driverPhoneNumber) => {
   if (!paypackClient) {
     await initPaypack();
@@ -56,8 +56,8 @@ const processCashOut = async (amount, driverPhoneNumber) => {
   try {
     const environment = process.env.NODE_ENV === "production" ? "production" : "development";
     const response = await paypackClient.cashout({
-      number: driverPhoneNumber, // Driver phone number
-      amount: amount, // Amount to be transferred to driver
+      number: driverPhoneNumber, 
+      amount: amount, 
       environment: environment,
     });
 
@@ -74,17 +74,17 @@ const processCashOut = async (amount, driverPhoneNumber) => {
   }
 };
 
-// Function to handle the entire payment flow
+
 const handlePaymentFlow = async (amount, customerPhoneNumber, driverPhoneNumber) => {
   try {
-    // Step 1: Customer pays (Cash-in)
+    
     const cashInSuccess = await processCashIn(amount, customerPhoneNumber);
     if (!cashInSuccess) {
       console.log("Payment from customer failed. Ending process.");
       return;
     }
 
-    // Step 2: Transfer money to driver (Cash-out)
+    
     const cashOutSuccess = await processCashOut(amount, driverPhoneNumber);
     if (!cashOutSuccess) {
       console.log("Cash-out to driver failed.");

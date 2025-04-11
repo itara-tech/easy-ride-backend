@@ -1,106 +1,114 @@
 @baseUrl = http://localhost:3000/api
-@customerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0NjdjMmY4LThjNmUtNGE4ZS1iNjE5LTMwMjdiNGI5ODJmMSIsInVzZXJUeXBlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3NDE1MjgxNzEsImV4cCI6MTc0NDEyMDE3MX0._T_S4FYRpeOLknpWNjgvR0i8EoZPZf1liVfJ2enymwo
-@driverToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImJkYjA4YTFiLTIxNzgtNDc0Yy05YzY1LTQ5YTNjZGU1YzdiYSIsInVzZXJUeXBlIjoiRFJJVkVSIiwiaWF0IjoxNzQxNTI4MTk2LCJleHAiOjE3NDQxMjAxOTZ9.LRtnrOEVzqIcqAq1D6kEA_Mw2-3bFUHs6SR2sp_OY68
-@customerId = 6467c2f8-8c6e-4a8e-b619-3027b4b982f1
-@driverId = bdb08a1b-2178-474c-9c65-49a3cde5c7ba
-@tripId = 17af7168-625b-4607-84b1-5147c6ab1ff1
 
-### Create Payment with PayPack
-# Creates a payment that can be paid through PayPack
-POST {{baseUrl}}/payments/create
+@customerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjkyY2FkMGVjLTNmMzctNDY3OS05MTQ0LWJhMTBhY2E5ODA5NSIsInVzZXJUeXBlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3NDQyOTk4ODYsImV4cCI6MTc0Njg5MTg4Nn0.MzPmzpO47HFG2Rm0sUF0K2f8c3EQTVSBv4clEe8qSI8
+
+@driverToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImExYzhjODc1LTMzOWUtNDBiYy05ZGM3LTdhZTczMDc5N2Q4NiIsInVzZXJUeXBlIjoiRFJJVkVSIiwiaWF0IjoxNzQ0Mjk5OTQwLCJleHAiOjE3NDY4OTE5NDB9.K5Yt7ZVgHWXtgggFn0h3zoHG8pz89rIoP7BpryES7Ko
+
+@customerId = 92cad0ec-3f37-4679-9144-ba10aca98095
+
+@driverId = a1c8c875-339e-40bc-9dc7-7ae730797d86
+
+@tripId = f2a4db09-1b5d-4ba9-97e4-e77121a28f5c
+
+### --------------------------------------
+### 1. Create PayPack Mobile Money Payment
+### --------------------------------------
+
+POST {{baseUrl}}/payment/create
 Authorization: Bearer {{customerToken}}
 Content-Type: application/json
 
 {
   "amount": 1000,
-  "phoneNumber": "250700000000",
-  "description": "Payment for ride",
+  "phoneNumber": "0782454192",
+  "description": "Payment for ride #{{tripId}}",
   "tripId": "{{tripId}}",
   "paymentGateway": "paypack"
 }
 
-### Create Simple Payment with Mobile Money
-# Records a mobile money payment in the database
-POST {{baseUrl}}/payments/create
+### --------------------------------------
+### 2. Create Simple Mobile Money Payment
+### --------------------------------------
+
+POST {{baseUrl}}/payment/create
 Authorization: Bearer {{customerToken}}
 Content-Type: application/json
 
 {
-  "amount": 1000,
-  "phoneNumber": "250700000000",
-  "description": "Payment for ride",
+  "amount": 1500,
+  "phoneNumber": "250788654321",
+  "description": "Mobile money payment for ride",
   "tripId": "{{tripId}}",
-  "paymentGateway": "simple",
+  "paymentGateway": "PAYPACK",
   "paymentMethod": "MOMO"
 }
 
-### Create Simple Payment with Card
-# Records a card payment in the database
-POST {{baseUrl}}/payments/create
+### 3. Create Simple Card Payment
+POST {{baseUrl}}/payment/create
 Authorization: Bearer {{customerToken}}
 Content-Type: application/json
 
 {
-  "amount": 1000,
-  "description": "Payment for ride",
+  "amount": 2000,
+  "description": "Card payment for ride",
   "tripId": "{{tripId}}",
   "paymentGateway": "simple",
   "paymentMethod": "CARD"
 }
 
-### Create Simple Payment with Cash
-# Records a cash payment in the database
-POST {{baseUrl}}/payments/create
+### 4. Create Simple Cash Payment
+POST {{baseUrl}}/payment/create
 Authorization: Bearer {{customerToken}}
 Content-Type: application/json
 
 {
-  "amount": 1000,
-  "description": "Payment for ride",
-  "tripId": "{{tripId}}",
-  "paymentGateway": "simple",
-    1000,
-  "description": "Payment for ride",
+  "amount": 2500,
+  "description": "Cash payment for ride",
   "tripId": "{{tripId}}",
   "paymentGateway": "simple",
   "paymentMethod": "CASH"
 }
 
-### Get Payment History
-# Retrieves payment history for the authenticated user
-GET {{baseUrl}}/payments/history
+### 5. Check PayPack Payment Status (replace with actual reference)
+GET {{baseUrl}}/payment/status/PAYPACK-1234567890?gateway=paypack
 Authorization: Bearer {{customerToken}}
 
-### Process a Refund
-# Initiates a refund for a specific trip
-POST {{baseUrl}}/payments/refund
-Content-Type: application/json
+### 6. Check Simple Payment Status (replace with actual reference)
+GET {{baseUrl}}/payment/status/PAY-9876543210?gateway=simple
 Authorization: Bearer {{customerToken}}
+
+### 7. Customer Payment History
+GET {{baseUrl}}/payment/history
+Authorization: Bearer {{customerToken}}
+
+### 8. Driver Payment History
+GET {{baseUrl}}/payment/history
+Authorization: Bearer {{driverToken}}
+
+### 9. Process Refund for PayPack Payment
+POST {{baseUrl}}/payment/refund
+Authorization: Bearer {{customerToken}}
+Content-Type: application/json
 
 {
   "amount": 1000,
-  "phoneNumber": "250700000000",
+  "phoneNumber": "250788123456",
   "tripId": "{{tripId}}",
-  "reason": "Customer requested refund"
+  "reason": "Customer cancellation"
 }
 
-### Check PayPack Payment Status
-# Checks the status of a payment by reference
-GET {{baseUrl}}/payments/status/PAYPACK-1234567890?gateway=paypack
+### 10. Get PayPack Account Information
+GET {{baseUrl}}/payment/account
 Authorization: Bearer {{customerToken}}
 
-### Check Simple Payment Status
-# Checks the status of a payment by reference
-GET {{baseUrl}}/payments/status/PAY-1234567890?gateway=simple
+### 11. Process Refund for Simple Payment
+POST {{baseUrl}}/payment/refund
 Authorization: Bearer {{customerToken}}
+Content-Type: application/json
 
-### Driver: Get Payment History
-# Retrieves payment history for the authenticated driver
-GET {{baseUrl}}/payments/history
-Authorization: Bearer {{driverToken}}
-
-### Get PayPack Account Information
-# Retrieves account information from PayPack
-GET {{baseUrl}}/payments/account
-Authorization: Bearer {{customerToken}}
-
+{
+  "amount": 1500,
+  "phoneNumber": "250788654321",
+  "tripId": "{{tripId}}",
+  "reason": "Service not provided"
+}

@@ -15,16 +15,16 @@ const router = express.Router();
 router.post('/request', authenticate, isCustomer, createRideRequestController);
 
 // Accept a ride (driver only)
-router.put('/accept', authenticate, isDriver, acceptRideController);
+router.put('/accept', acceptRideController);
 
 // Complete a ride (driver only)
-router.put('/complete', authenticate, isDriver, completeRideController);
+router.put('/complete',  completeRideController);
 
 // Cancel a ride (customer only)
-router.put('/cancel', authenticate, isCustomer, cancelRideController);
+router.put('/cancel', cancelRideController);
 
 // Get nearby ride requests (driver only)
-router.get('/nearby', authenticate, isDriver, getNearbyRidesController);
+router.get('/nearby', getNearbyRidesController);
 
 // Reorder a ride
 router.post('/reorder', reorderRideController);

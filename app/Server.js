@@ -40,8 +40,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/chat', chatRoutes);
-
-app.use("/api/payments", paymentRoutes)
+app.use("/api/payment", paymentRoutes)
 app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/rides', rideRoutes);
 
