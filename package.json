@@ -14,7 +14,7 @@
     "push": "npx prisma db push",
     "pull": "npx prisma db pull",
     "studio": "npx prisma studio",
-    "migrate": "npx prisma migrate dev ",
+    "migrate": "npx prisma migrate dev --name init",
     "deploy": "npx prisma migrate deploy",
     "seed": "npx prisma db seed",
     "format": "npx prettier --write .",
@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@prisma/client": "^6.6.0",
-    "axios": "^1.8.1",
+    "axios": "^1.8.4",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",

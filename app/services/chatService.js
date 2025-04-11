@@ -5,20 +5,20 @@ export const createChatRoom = async (customerId, driverId, rideRequestId) => {
   await Promise.all([
     prisma.customer.findUniqueOrThrow({ where: { id: customerId } }),
     prisma.driver.findUniqueOrThrow({ where: { id: driverId } }),
-    prisma.rideRequest.findUniqueOrThrow({ where: { id: rideRequestId } })
+    prisma.rideRequest.findUniqueOrThrow({ where: { id: rideRequestId } }),
   ]);
 
   const chatRoom = await prisma.chatRoom.create({
     data: {
       customer: { connect: { id: customerId } },
       driver: { connect: { id: driverId } },
-      rideRequest: { connect: { id: rideRequestId } }
+      rideRequest: { connect: { id: rideRequestId } },
     },
     include: {
       customer: true,
       driver: true,
-      rideRequest: true
-    }
+      rideRequest: true,
+    },
   });
   return chatRoom;
 };
@@ -29,8 +29,8 @@ export const createMessage = async (chatRoomId, senderId, content, priceOffer = 
     include: {
       customer: true,
       driver: true,
-      rideRequest: true
-    }
+      rideRequest: true,
+    },
   });
 
   if (!chatRoom) {
@@ -53,11 +53,7 @@ export const createMessage = async (chatRoomId, senderId, content, priceOffer = 
 
     // Notify the other party about the new offer
     const recipientId = isCustomer ? chatRoom.driver.id : chatRoom.customer.id;
-    await createNotification(
-      recipientId,
-      'New Price Offer',
-      `New price offer: ${priceOffer}`
-    );
+    await createNotification(recipientId, 'New Price Offer', `New price offer: ${priceOffer}`);
   }
 
   // Create the message
@@ -67,12 +63,12 @@ export const createMessage = async (chatRoomId, senderId, content, priceOffer = 
       [isCustomer ? 'customer' : 'driver']: { connect: { id: senderId } },
       content,
       priceOffer,
-      isPriceAccepted: false
+      isPriceAccepted: false,
     },
     include: {
       customer: isCustomer ? { select: { id: true, name: true, avatar: true } } : false,
-      driver: isDriver ? { select: { id: true, name: true, avatar: true } } : false
-    }
+      driver: isDriver ? { select: { id: true, name: true, avatar: true } } : false,
+    },
   });
 
   return message;
@@ -86,10 +82,10 @@ export const acceptPriceOffer = async (messageId, acceptorId) => {
         include: {
           customer: true,
           driver: true,
-          rideRequest: true
-        }
-      }
-    }
+          rideRequest: true,
+        },
+      },
+    },
   });
 
   if (!message) {
@@ -113,14 +109,14 @@ export const acceptPriceOffer = async (messageId, acceptorId) => {
     where: { id: message.chatRoom.rideRequest.id },
     data: {
       estimatedPrice: message.priceOffer,
-      status: 'ACCEPTED'
-    }
+      status: 'ACCEPTED',
+    },
   });
 
   // Mark the price as accepted
   const updatedMessage = await prisma.message.update({
     where: { id: messageId },
-    data: { isPriceAccepted: true }
+    data: { isPriceAccepted: true },
   });
 
   // Notify both parties
@@ -128,13 +124,13 @@ export const acceptPriceOffer = async (messageId, acceptorId) => {
     createNotification(
       message.chatRoom.customer.id,
       'Price Accepted',
-      `The price of ${message.priceOffer} has been accepted`
+      `The price of ${message.priceOffer} has been accepted`,
     ),
     createNotification(
       message.chatRoom.driver.id,
       'Price Accepted',
-      `The price of ${message.priceOffer} has been accepted`
-    )
+      `The price of ${message.priceOffer} has been accepted`,
+    ),
   ]);
 
   return updatedMessage;
@@ -146,8 +142,8 @@ export const handleRegret = async (chatRoomId, regretterId) => {
     include: {
       customer: true,
       driver: true,
-      rideRequest: true
-    }
+      rideRequest: true,
+    },
   });
 
   if (!chatRoom) {
@@ -165,7 +161,7 @@ export const handleRegret = async (chatRoomId, regretterId) => {
   // Update the ride request status
   await prisma.rideRequest.update({
     where: { id: chatRoom.rideRequest.id },
-    data: { status: 'CANCELED' }
+    data: { status: 'CANCELED' },
   });
 
   // Create a regret message
@@ -174,15 +170,15 @@ export const handleRegret = async (chatRoomId, regretterId) => {
       chatRoomId,
       [isCustomer ? 'customerId' : 'driverId']: regretterId,
       content: `I regret the agreed price and am canceling this ride.`,
-      isRegret: true
-    }
+      isRegret: true,
+    },
   });
 
   // Notify the other party
   await createNotification(
     isCustomer ? chatRoom.driver.id : chatRoom.customer.id,
     'Ride Canceled',
-    'The other party has canceled the ride due to price regret'
+    'The other party has canceled the ride due to price regret',
   );
 
   return regretMessage;
@@ -210,7 +206,7 @@ export const getMessages = async (chatRoomId, page = 1, limit = 20) => {
           name: true,
           email: true,
           avatar: true,
-        }
+        },
       },
     },
   });
@@ -230,17 +226,18 @@ export const getMessages = async (chatRoomId, page = 1, limit = 20) => {
 async function createNotification(userId, title, message) {
   try {
     // Determine if user is customer or driver
-    const user = await prisma.customer.findUnique({ where: { id: userId } }) || 
-                  await prisma.driver.findUnique({ where: { id: userId } });
-    
+    const user =
+      (await prisma.customer.findUnique({ where: { id: userId } })) ||
+      (await prisma.driver.findUnique({ where: { id: userId } }));
+
     if (!user) return;
 
     await prisma.notification.create({
       data: {
         title,
         message,
-        [user.email.includes('@driver.') ? 'driverId' : 'customerId']: userId
-      }
+        [user.email.includes('@driver.') ? 'driverId' : 'customerId']: userId,
+      },
     });
   } catch (error) {
     console.error('Error creating notification:', error);

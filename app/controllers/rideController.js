@@ -26,19 +26,17 @@ export const createRideRequestController = async (req, res) => {
     const updatedPickupLocation = {
       lat: pickupLat,
       lon: pickupLon,
-      address: pickupPlace || pickupLocation.address // Fallback to original address if reverse geocoding fails
+      address: pickupPlace || pickupLocation.address, // Fallback to original address if reverse geocoding fails
     };
 
     const updatedDropoffLocation = {
       lat: dropoffLat,
       lon: dropoffLon,
-      address: dropoffPlace || dropoffLocation.address // Fallback to original address if reverse geocoding fails
+      address: dropoffPlace || dropoffLocation.address, // Fallback to original address if reverse geocoding fails
     };
 
     // Create a new ride request
     const rideRequest = await createRideRequest(customerId, updatedPickupLocation, updatedDropoffLocation);
-
-
 
     res.status(201).json({ rideRequest });
   } catch (error) {

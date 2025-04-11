@@ -1,2 +1,1 @@
-
 declare interface mailOptionsType {}

@@ -31,29 +31,30 @@ passport.use(
   ),
 );
 
-
 const opts = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: process.env.JWT_SECRET,
 };
 
-passport.use(new JwtStrategy(opts, async (jwtPayload, done) => {
-  try {
-let user;
-if (jwtPayload.userType === 'CUSTOMER') {
-  user = await prisma.customer.findUnique({ where: { id: jwtPayload.id } });
-} else if (jwtPayload.userType === 'DRIVER') {
-  user = await prisma.driver.findUnique({ where: { id: jwtPayload.id } });
-}
+passport.use(
+  new JwtStrategy(opts, async (jwtPayload, done) => {
+    try {
+      let user;
+      if (jwtPayload.userType === 'CUSTOMER') {
+        user = await prisma.customer.findUnique({ where: { id: jwtPayload.id } });
+      } else if (jwtPayload.userType === 'DRIVER') {
+        user = await prisma.driver.findUnique({ where: { id: jwtPayload.id } });
+      }
 
-    if (user) {
-      return done(null, user);
-    } else {
-      return done(null, false);
+      if (user) {
+        return done(null, user);
+      } else {
+        return done(null, false);
+      }
+    } catch (error) {
+      return done(error, false);
     }
-  } catch (error) {
-    return done(error, false);
-  }
-}));
+  }),
+);
 
 export default passport;

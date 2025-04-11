@@ -1,10 +1,10 @@
 import express from 'express';
-import { 
-  createChatRoom, 
-  sendMessage, 
-  acceptPriceOffer, 
-  handleRegret, 
-  getChatMessages 
+import {
+  createChatRoom,
+  sendMessage,
+  acceptPriceOffer,
+  handleRegret,
+  getChatMessages,
 } from '../controllers/chatController.js';
 
 const router = express.Router();

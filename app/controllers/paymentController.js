@@ -6,13 +6,12 @@ import {
   getPaypackAccountInfo,
   verifyPaymentWebhook,
   exportUserPaymentHistory,
-} from "../services/paymentService.js";
-import { initPaypack } from "../services/paypackService.js";
-import { validationResult } from "express-validator";
-
+} from '../services/paymentService.js';
+import { initPaypack } from '../services/paypackService.js';
+import { validationResult } from 'express-validator';
 
 initPaypack().then((success) => {
-  console.log(success ? "PayPack initialized successfully" : "Failed to initialize PayPack");
+  console.log(success ? 'PayPack initialized successfully' : 'Failed to initialize PayPack');
 });
 
 /**
@@ -25,7 +24,7 @@ export const createPayment = async (req, res) => {
   }
 
   try {
-    const { amount, phoneNumber, description, tripId, paymentGateway = "simple", paymentMethod } = req.body;
+    const { amount, phoneNumber, description, tripId, paymentGateway = 'simple', paymentMethod } = req.body;
     const customerId = req.user.id;
 
     const paymentResponse = await createPaymentTransaction(
@@ -35,20 +34,20 @@ export const createPayment = async (req, res) => {
       description,
       tripId,
       paymentGateway,
-      paymentMethod
+      paymentMethod,
     );
 
     return res.status(201).json({
       success: true,
-      message: "Payment initiated successfully",
+      message: 'Payment initiated successfully',
       data: paymentResponse.data,
       gateway: paymentGateway,
     });
   } catch (error) {
-    console.error("Payment creation error:", error);
+    console.error('Payment creation error:', error);
     return res.status(500).json({
       success: false,
-      message: "Failed to initiate payment",
+      message: 'Failed to initiate payment',
       error: error.message,
     });
   }
@@ -62,10 +61,10 @@ export const verifyPayment = async (req, res) => {
     const result = await verifyPaymentWebhook(req.body);
     return res.status(200).json(result);
   } catch (error) {
-    console.error("Payment verification error:", error);
+    console.error('Payment verification error:', error);
     return res.status(400).json({
       success: false,
-      message: "Invalid webhook payload",
+      message: 'Invalid webhook payload',
     });
   }
 };
@@ -79,25 +78,18 @@ export const getPaymentHistory = async (req, res) => {
     const userId = req.user.id;
     const userType = req.user.type;
 
-    const history = await getUserPaymentHistory(
-      userId,
-      userType,
-      Number(offset),
-      Number(limit),
-      status,
-      gateway
-    );
+    const history = await getUserPaymentHistory(userId, userType, Number(offset), Number(limit), status, gateway);
 
     return res.status(200).json({
       success: true,
-      message: "Payment history retrieved",
+      message: 'Payment history retrieved',
       data: history,
     });
   } catch (error) {
-    console.error("Payment history error:", error);
+    console.error('Payment history error:', error);
     return res.status(500).json({
       success: false,
-      message: "Failed to retrieve payment history",
+      message: 'Failed to retrieve payment history',
       error: error.message,
     });
   }
@@ -110,20 +102,20 @@ export const exportPaymentHistory = async (req, res) => {
   try {
     const userId = req.user.id;
     const userType = req.user.type;
-    
+
     const result = await exportUserPaymentHistory(userId, userType);
-    
+
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', `attachment; filename=payments_${userId}.xlsx`);
-    
+
     return result.xlsx.write(res).then(() => {
       res.status(200).end();
     });
   } catch (error) {
-    console.error("Export error:", error);
+    console.error('Export error:', error);
     return res.status(500).json({
       success: false,
-      message: "Failed to export payment history",
+      message: 'Failed to export payment history',
       error: error.message,
     });
   }
@@ -142,24 +134,18 @@ export const refundPayment = async (req, res) => {
     const { amount, phoneNumber, tripId, reason } = req.body;
     const customerId = req.user.id;
 
-    const refundResponse = await processRefund(
-      customerId,
-      amount,
-      phoneNumber,
-      tripId,
-      reason
-    );
+    const refundResponse = await processRefund(customerId, amount, phoneNumber, tripId, reason);
 
     return res.status(200).json({
       success: true,
-      message: "Refund processed successfully",
+      message: 'Refund processed successfully',
       data: refundResponse,
     });
   } catch (error) {
-    console.error("Refund error:", error);
+    console.error('Refund error:', error);
     return res.status(500).json({
       success: false,
-      message: "Failed to process refund",
+      message: 'Failed to process refund',
       error: error.message,
     });
   }
@@ -171,7 +157,7 @@ export const refundPayment = async (req, res) => {
 export const getPaymentStatus = async (req, res) => {
   try {
     const { reference } = req.params;
-    const { gateway = "simple" } = req.query;
+    const { gateway = 'simple' } = req.query;
 
     const statusResponse = await checkPaymentStatus(reference, gateway);
 
@@ -181,15 +167,15 @@ export const getPaymentStatus = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Payment status retrieved",
+      message: 'Payment status retrieved',
       data: statusResponse.data,
       gateway,
     });
   } catch (error) {
-    console.error("Status check error:", error);
+    console.error('Status check error:', error);
     return res.status(500).json({
       success: false,
-      message: "Failed to check payment status",
+      message: 'Failed to check payment status',
       error: error.message,
     });
   }
@@ -204,15 +190,15 @@ export const getAccountDetails = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Account information retrieved",
+      message: 'Account information retrieved',
       data: accountInfo.data,
-      gateway: "paypack",
+      gateway: 'paypack',
     });
   } catch (error) {
-    console.error("Account info error:", error);
+    console.error('Account info error:', error);
     return res.status(500).json({
       success: false,
-      message: "Failed to retrieve account information",
+      message: 'Failed to retrieve account information',
       error: error.message,
     });
   }
