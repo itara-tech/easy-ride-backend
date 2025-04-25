@@ -1,24 +1,34 @@
 @baseUrl = http://localhost:3000/api
-@token = your_admin_token_here
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijk2MWRhZTVkLTkzMGQtNDA4Ny1iNDQ2LWVhYTg3ZTEyYjczOSIsInVzZXJUeXBlIjoiRFJJVkVSIiwiaWF0IjoxNzQ1NTY5NzMxLCJleHAiOjE3NDgxNjE3MzF9.tN-NZ029WES7-4cW3NryGGVrOUHPD8zx4lTIhQcxa94
+@userEmail = mdonavan33@gmail.com
+@userId = 961dae5d-930d-4087-b446-eaa87e12b739
 
-### Get all users
-GET {{baseUrl}}/admin/users?userType=customer&page=1&limit=10
-Authorization: Bearer {{token}}
+### 1. Get all users (paginated)
+GET {{baseUrl}}/users?page=1&limit=10
+Authorization: Bearer {{adminToken}}
 
-### Get user by ID
-GET {{baseUrl}}/admin/users/customer/user_id_here
-Authorization: Bearer {{token}}
+### 2. Get specific user by ID
+GET {{baseUrl}}/users/{{userId}}
+Authorization: Bearer {{adminToken}}
 
-### Update user status
-PUT {{baseUrl}}/admin/users/customer/user_id_here
-Authorization: Bearer {{token}}
+### 3. Update user verification status
+PUT {{baseUrl}}/users/{{userId}}/status
+Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
 {
   "isVerified": true
 }
 
-### Get system stats
-GET {{baseUrl}}/admin/stats
-Authorization: Bearer {{token}}
+### 4. Promote user to admin
+POST {{baseUrl}}/users/promote
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
 
+{
+  "email": "{{userEmail}}"
+}
+
+### 5. Get system statistics
+GET {{baseUrl}}/stats
+Authorization: Bearer {{adminToken}}

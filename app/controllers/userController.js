@@ -3,9 +3,7 @@ import { getUserProfile, updateUserProfile, deleteUserAccount } from '../service
 export const getUserProfileController = async (req, res) => {
   try {
     const { userId } = req.params;
-    const userType = req.user.userType; // Get userType from authenticated user
-
-    const userProfile = await getUserProfile(userId, userType);
+    const userProfile = await getUserProfile(userId);
     res.status(200).json(userProfile);
   } catch (error) {
     console.error('Error in getUserProfileController:', error);
@@ -19,10 +17,8 @@ export const getUserProfileController = async (req, res) => {
 export const updateUserProfileController = async (req, res) => {
   try {
     const { userId } = req.params;
-    const userType = req.user.userType; // Get userType from authenticated user
     const updateData = req.body;
-
-    const updatedProfile = await updateUserProfile(userId, userType, updateData);
+    const updatedProfile = await updateUserProfile(userId, updateData);
     res.status(200).json(updatedProfile);
   } catch (error) {
     console.error('Error in updateUserProfileController:', error);
@@ -33,9 +29,7 @@ export const updateUserProfileController = async (req, res) => {
 export const deleteUserAccountController = async (req, res) => {
   try {
     const { userId } = req.params;
-    const userType = req.user.userType; // Get userType from authenticated user
-
-    await deleteUserAccount(userId, userType);
+    await deleteUserAccount(userId);
     res.status(200).json({ message: 'User account successfully deleted' });
   } catch (error) {
     console.error('Error in deleteUserAccountController:', error);

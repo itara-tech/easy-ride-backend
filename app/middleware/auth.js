@@ -51,3 +51,40 @@ export const isResourceOwner = async (req, res, next) => {
     res.status(401).json({ message: 'Authentication failed', error: error.message });
   }
 };
+
+
+export const isAdmin = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'No token provided' });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    // Check if user is admin in either table
+    const [customerAdmin, driverAdmin] = await Promise.all([
+      prisma.customer.findUnique({
+        where: { 
+          email: decoded.email,
+          isAdmin: true 
+        }
+      }),
+      prisma.driver.findUnique({
+        where: { 
+          email: decoded.email,
+          isAdmin: true 
+        }
+      })
+    ]);
+
+    if (!customerAdmin && !driverAdmin) {
+      return res.status(403).json({ error: 'Not authorized as admin' });
+    }
+
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.status(403).json({ error: 'Failed to authenticate as admin' });
+  }
+};

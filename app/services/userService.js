@@ -1,22 +1,22 @@
 import { prisma } from '../Server.js';
 
-export const getUserProfile = async (userId, userType) => {
+export const getUserProfile = async (userId) => {
   try {
-    let user;
+    // Try to find the user as a Customer first
+    let user = await prisma.customer.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        isVerified: true,
+        createdAt: true,
+      },
+    });
 
-    if (userType === 'CUSTOMER') {
-      user = await prisma.customer.findUnique({
-        where: { id: userId },
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          phone: true,
-          isVerified: true,
-          createdAt: true,
-        },
-      });
-    } else if (userType === 'DRIVER') {
+    // If not found as Customer, try as Driver
+    if (!user) {
       user = await prisma.driver.findUnique({
         where: { id: userId },
         select: {
@@ -31,8 +31,6 @@ export const getUserProfile = async (userId, userType) => {
           createdAt: true,
         },
       });
-    } else {
-      throw new Error('Invalid user type');
     }
 
     if (!user) {
@@ -46,28 +44,28 @@ export const getUserProfile = async (userId, userType) => {
   }
 };
 
-export const updateUserProfile = async (userId, userType, updateData) => {
+export const updateUserProfile = async (userId, updateData) => {
   try {
-    let updatedUser;
+    // Try to update as Customer first
+    let updatedUser = await prisma.customer.update({
+      where: { id: userId },
+      data: {
+        name: updateData.name,
+        phone: updateData.phone,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        avatar: true,
+        isVerified: true,
+        createdAt: true,
+      },
+    }).catch(() => null); // If not found, return null
 
-    if (userType === 'CUSTOMER') {
-      updatedUser = await prisma.customer.update({
-        where: { id: userId },
-        data: {
-          name: updateData.name,
-          phone: updateData.phone,
-        },
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          phone: true,
-          avatar: true,
-          isVerified: true,
-          createdAt: true,
-        },
-      });
-    } else if (userType === 'DRIVER') {
+    // If not found as Customer, try as Driver
+    if (!updatedUser) {
       updatedUser = await prisma.driver.update({
         where: { id: userId },
         data: {
@@ -90,8 +88,6 @@ export const updateUserProfile = async (userId, userType, updateData) => {
           createdAt: true,
         },
       });
-    } else {
-      throw new Error('Invalid user type');
     }
 
     return updatedUser;
@@ -101,30 +97,15 @@ export const updateUserProfile = async (userId, userType, updateData) => {
   }
 };
 
-export const deleteUserAccount = async (userId, userType) => {
+export const deleteUserAccount = async (userId) => {
   try {
-    let user;
-    if (userType === 'CUSTOMER') {
-      user = await prisma.customer.findUnique({
-        where: { id: userId },
-      });
-    } else if (userType === 'DRIVER') {
-      user = await prisma.driver.findUnique({
-        where: { id: userId },
-      });
-    } else {
-      throw new Error('Invalid user type');
-    }
+    // Try to delete as Customer first
+    const deletedCustomer = await prisma.customer.delete({
+      where: { id: userId },
+    }).catch(() => null); // If not found, return null
 
-    if (!user) {
-      return { message: 'User not found or already deleted' };
-    }
-
-    if (userType === 'CUSTOMER') {
-      await prisma.customer.delete({
-        where: { id: userId },
-      });
-    } else if (userType === 'DRIVER') {
+    // If not found as Customer, try as Driver
+    if (!deletedCustomer) {
       await prisma.driver.delete({
         where: { id: userId },
       });
