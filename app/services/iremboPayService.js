@@ -1,18 +1,18 @@
-import axios from "axios"
+import axios from 'axios';
 
 // Set the base URL based on environment
 const BASE_URL =
-  process.env.NODE_ENV === "production" ? "https://api.irembopay.com" : "https://api.sandbox.irembopay.com"
+  process.env.NODE_ENV === 'production' ? 'https://api.irembopay.com' : 'https://api.sandbox.irembopay.com';
 
 // Create axios instance with default headers
 const iremboPayClient = axios.create({
   baseURL: BASE_URL,
   headers: {
-    "Content-Type": "application/json",
-    "X-API-Version": "2",
-    "irembopay-secretkey": process.env.IREMBOPAY_SECRET_KEY,
+    'Content-Type': 'application/json',
+    'X-API-Version': '2',
+    'irembopay-secretkey': process.env.IREMBOPAY_SECRET_KEY,
   },
-})
+});
 
 /**
  * Create an invoice in IremboPay
@@ -21,13 +21,13 @@ const iremboPayClient = axios.create({
  */
 export const createInvoice = async (invoiceData) => {
   try {
-    const response = await iremboPayClient.post("/payments/invoices", invoiceData)
-    return response.data
+    const response = await iremboPayClient.post('/payments/invoices', invoiceData);
+    return response.data;
   } catch (error) {
-    console.error("Error creating IremboPay invoice:", error.response?.data || error.message)
-    throw new Error(error.response?.data?.message || "Failed to create IremboPay invoice")
+    console.error('Error creating IremboPay invoice:', error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || 'Failed to create IremboPay invoice');
   }
-}
+};
 
 /**
  * Get invoice details from IremboPay
@@ -36,13 +36,13 @@ export const createInvoice = async (invoiceData) => {
  */
 export const getInvoice = async (invoiceNumber) => {
   try {
-    const response = await iremboPayClient.get(`/payments/invoices/${invoiceNumber}`)
-    return response.data
+    const response = await iremboPayClient.get(`/payments/invoices/${invoiceNumber}`);
+    return response.data;
   } catch (error) {
-    console.error("Error fetching IremboPay invoice:", error.response?.data || error.message)
-    throw new Error(error.response?.data?.message || "Failed to fetch IremboPay invoice")
+    console.error('Error fetching IremboPay invoice:', error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || 'Failed to fetch IremboPay invoice');
   }
-}
+};
 
 /**
  * Update an invoice in IremboPay
@@ -52,13 +52,13 @@ export const getInvoice = async (invoiceNumber) => {
  */
 export const updateInvoice = async (invoiceNumber, updateData) => {
   try {
-    const response = await iremboPayClient.put(`/payments/invoices/${invoiceNumber}`, updateData)
-    return response.data
+    const response = await iremboPayClient.put(`/payments/invoices/${invoiceNumber}`, updateData);
+    return response.data;
   } catch (error) {
-    console.error("Error updating IremboPay invoice:", error.response?.data || error.message)
-    throw new Error(error.response?.data?.message || "Failed to update IremboPay invoice")
+    console.error('Error updating IremboPay invoice:', error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || 'Failed to update IremboPay invoice');
   }
-}
+};
 
 /**
  * Create a batch invoice in IremboPay
@@ -67,13 +67,13 @@ export const updateInvoice = async (invoiceNumber, updateData) => {
  */
 export const createBatchInvoice = async (batchData) => {
   try {
-    const response = await iremboPayClient.post("/payments/invoices/batch", batchData)
-    return response.data
+    const response = await iremboPayClient.post('/payments/invoices/batch', batchData);
+    return response.data;
   } catch (error) {
-    console.error("Error creating IremboPay batch invoice:", error.response?.data || error.message)
-    throw new Error(error.response?.data?.message || "Failed to create IremboPay batch invoice")
+    console.error('Error creating IremboPay batch invoice:', error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || 'Failed to create IremboPay batch invoice');
   }
-}
+};
 
 /**
  * Initiate mobile money push payment
@@ -82,13 +82,13 @@ export const createBatchInvoice = async (batchData) => {
  */
 export const initiateMobilePayment = async (paymentData) => {
   try {
-    const response = await iremboPayClient.post("/payments/transactions/initiate", paymentData)
-    return response.data
+    const response = await iremboPayClient.post('/payments/transactions/initiate', paymentData);
+    return response.data;
   } catch (error) {
-    console.error("Error initiating mobile payment:", error.response?.data || error.message)
-    throw new Error(error.response?.data?.message || "Failed to initiate mobile payment")
+    console.error('Error initiating mobile payment:', error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || 'Failed to initiate mobile payment');
   }
-}
+};
 
 /**
  * Verify IremboPay webhook signature
@@ -98,18 +98,17 @@ export const initiateMobilePayment = async (paymentData) => {
  * @returns {Boolean} - Whether signature is valid
  */
 export const verifyWebhookSignature = (signature, timestamp, payload) => {
-  const crypto = require("crypto")
+  const crypto = require('crypto');
 
   // Create the payload to hash (timestamp + "#" + JSON payload)
-  const payloadToHash = `${timestamp}#${JSON.stringify(payload)}`
+  const payloadToHash = `${timestamp}#${JSON.stringify(payload)}`;
 
   // Compute HMAC with SHA256
   const computedSignature = crypto
-    .createHmac("sha256", process.env.IREMBOPAY_SECRET_KEY)
+    .createHmac('sha256', process.env.IREMBOPAY_SECRET_KEY)
     .update(payloadToHash)
-    .digest("hex")
+    .digest('hex');
 
   // Compare signatures
-  return computedSignature === signature
-}
-
+  return computedSignature === signature;
+};

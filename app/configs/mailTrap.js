@@ -1,14 +1,12 @@
-import { MailtrapClient } from "mailtrap";
+import { MailtrapClient } from 'mailtrap';
 
 const TOKEN = process.env.MAILTRAPTOKEN;
 
 export const mailTrapclient = new MailtrapClient({
-    token: TOKEN,
+  token: TOKEN,
 });
 
 export const sender = {
-    email: "hello@demomailtrap.com",
-    name: "Mailtrap Test",
+  email: 'hello@demomailtrap.com',
+  name: 'Mailtrap Test',
 };
-
-

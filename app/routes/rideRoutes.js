@@ -18,7 +18,7 @@ router.post('/request', authenticate, isCustomer, createRideRequestController);
 router.put('/accept', acceptRideController);
 
 // Complete a ride (driver only)
-router.put('/complete',  completeRideController);
+router.put('/complete', completeRideController);
 
 // Cancel a ride (customer only)
 router.put('/cancel', cancelRideController);

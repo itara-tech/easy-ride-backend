@@ -23,12 +23,11 @@ export const createRideRequest = async (customerId, source, destination) => {
     const distance = distanceResponse ? distanceResponse.distanceKilometers : null;
 
     console.log(distance);
-    
 
     // Validate distance calculation
     console.log(`Distance calculated: ${distance}`);
     if (isNaN(distance) || distance < 0) {
-        console.warn(`Invalid distance calculation: Distance = ${distance}, 
+      console.warn(`Invalid distance calculation: Distance = ${distance}, 
 
         Source: (${source.lat}, ${source.lon}), 
         Destination: (${destination.lat}, ${destination.lon})`);
@@ -41,7 +40,6 @@ export const createRideRequest = async (customerId, source, destination) => {
     const estimatedPrice = Math.max(baseRate, baseRate + Number(distance) * ratePerKm);
 
     console.log(estimatedPrice);
-    
 
     // Update customer's current location
     await prisma.customer.update({
@@ -120,7 +118,6 @@ export const acceptRide = async (rideRequestId, driverId) => {
 };
 
 export const completeRide = async (rideId, finalAmount) => {
-
   if (!prisma) {
     throw new Error('Prisma client not initialized');
   }
@@ -140,8 +137,6 @@ export const completeRide = async (rideId, finalAmount) => {
     }
 
     //creating a payment for trip
-
-
 
     const rideComplete = await prisma.rideComplete.create({
       data: {

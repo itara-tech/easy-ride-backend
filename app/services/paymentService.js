@@ -1,11 +1,10 @@
-import prisma from "../configs/database.js";
+import prisma from '../configs/database.js';
 import {
   processPaypackPayment,
   processPaypackRefund,
   checkPaypackTransactionStatus,
   getPaypackAccount,
-} from "./paypackService.js";
-
+} from './paypackService.js';
 
 export const createPaymentTransaction = async (
   customerId,
@@ -13,8 +12,8 @@ export const createPaymentTransaction = async (
   phoneNumber,
   description,
   tripId,
-  paymentGateway = "simple",
-  paymentMethod = null
+  paymentGateway = 'simple',
+  paymentMethod = null,
 ) => {
   // Validate trip exists and belongs to customer
   const trip = await prisma.trip.findUnique({
@@ -25,7 +24,7 @@ export const createPaymentTransaction = async (
   });
 
   if (!trip) {
-    throw new Error("Trip not found or does not belong to this customer");
+    throw new Error('Trip not found or does not belong to this customer');
   }
 
   // Get customer details
@@ -37,10 +36,10 @@ export const createPaymentTransaction = async (
   let paymentResponse;
 
   // Process payment based on gateway
-  if (paymentGateway.toLowerCase() === "paypack") {
+  if (paymentGateway.toLowerCase() === 'paypack') {
     // Validate phone number for mobile money
-    if (!phoneNumber || !phoneNumber.startsWith("07")) {
-      throw new Error("Valid MTN mobile money number (07XXXXXXXX) required for PayPack payments");
+    if (!phoneNumber || !phoneNumber.startsWith('07')) {
+      throw new Error('Valid MTN mobile money number (07XXXXXXXX) required for PayPack payments');
     }
 
     // Process PayPack mobile money payment
@@ -54,9 +53,9 @@ export const createPaymentTransaction = async (
         where: { id: tripId },
         data: {
           paymentReference,
-          paymentGateway: "PAYPACK",
+          paymentGateway: 'PAYPACK',
           paymentStatus: paymentResponse.data.status.toUpperCase(),
-          paymentMethod: "MOMO",
+          paymentMethod: 'MOMO',
         },
       });
 
@@ -67,7 +66,7 @@ export const createPaymentTransaction = async (
           amount,
           phoneNumber,
           description: description || `PayPack payment for trip ${tripId}`,
-          method: "MOMO",
+          method: 'MOMO',
           status: paymentResponse.data.status.toUpperCase(),
           tripId,
           customerId,
@@ -75,24 +74,17 @@ export const createPaymentTransaction = async (
       });
 
       // Update wallet if payment succeeded immediately
-      if (paymentResponse.data.status === "successful") {
+      if (paymentResponse.data.status === 'successful') {
         await updateWalletBalance(customerId, -amount);
-        
+
         // Create payment success notification
-        await createPaymentNotification(
-          customerId,
-          trip.driverId,
-          tripId,
-          amount,
-          true
-        );
+        await createPaymentNotification(customerId, trip.driverId, tripId, amount, true);
       }
     }
-  } 
-  else if (paymentGateway.toLowerCase() === "simple") {
+  } else if (paymentGateway.toLowerCase() === 'simple') {
     // Validate payment method for simple payments
-    if (!paymentMethod || !["MOMO", "CARD", "CASH"].includes(paymentMethod)) {
-      throw new Error("Invalid payment method. Must be MOMO, CARD, or CASH");
+    if (!paymentMethod || !['MOMO', 'CARD', 'CASH'].includes(paymentMethod)) {
+      throw new Error('Invalid payment method. Must be MOMO, CARD, or CASH');
     }
 
     const paymentReference = `PAY-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
@@ -103,8 +95,8 @@ export const createPaymentTransaction = async (
       data: {
         paymentReference,
         paymentMethod,
-        paymentStatus: "SUCCESS",
-        paymentGateway: "SIMPLE",
+        paymentStatus: 'SUCCESS',
+        paymentGateway: 'SIMPLE',
       },
     });
 
@@ -116,7 +108,7 @@ export const createPaymentTransaction = async (
         phoneNumber,
         description: description || `Payment for trip ${tripId}`,
         method: paymentMethod,
-        status: "SUCCESS",
+        status: 'SUCCESS',
         tripId,
         customerId,
       },
@@ -126,39 +118,32 @@ export const createPaymentTransaction = async (
     await updateWalletBalance(customerId, -amount);
 
     // Create notifications
-    await createPaymentNotification(
-      customerId,
-      trip.driverId,
-      tripId,
-      amount,
-      true
-    );
+    await createPaymentNotification(customerId, trip.driverId, tripId, amount, true);
 
     paymentResponse = {
       success: true,
       data: {
         paymentReference,
         amount,
-        status: "SUCCESS",
+        status: 'SUCCESS',
         method: paymentMethod,
         createdAt: payment.createdAt,
       },
     };
   } else {
-    throw new Error("Invalid payment gateway. Must be paypack or simple");
+    throw new Error('Invalid payment gateway. Must be paypack or simple');
   }
 
   return paymentResponse;
 };
 
-
-export const checkPaymentStatus = async (reference, paymentGateway = "simple") => {
+export const checkPaymentStatus = async (reference, paymentGateway = 'simple') => {
   let response;
 
-  if (paymentGateway.toLowerCase() === "paypack") {
+  if (paymentGateway.toLowerCase() === 'paypack') {
     try {
       const statusResponse = await checkPaypackTransactionStatus(reference);
-      
+
       // Find the trip associated with this payment
       const trip = await prisma.trip.findFirst({
         where: { paymentReference: reference },
@@ -182,15 +167,9 @@ export const checkPaymentStatus = async (reference, paymentGateway = "simple") =
         });
 
         // If payment just succeeded, update wallet and notify
-        if (statusResponse.data.status === "successful" && trip.paymentStatus !== "SUCCESS") {
+        if (statusResponse.data.status === 'successful' && trip.paymentStatus !== 'SUCCESS') {
           await updateWalletBalance(trip.customerId, -statusResponse.data.amount);
-          await createPaymentNotification(
-            trip.customerId,
-            trip.driverId,
-            trip.id,
-            statusResponse.data.amount,
-            true
-          );
+          await createPaymentNotification(trip.customerId, trip.driverId, trip.id, statusResponse.data.amount, true);
         }
       }
 
@@ -203,17 +182,16 @@ export const checkPaymentStatus = async (reference, paymentGateway = "simple") =
           createdAt: statusResponse.data.created_at,
           updatedAt: new Date().toISOString(),
         },
-        gateway: "PAYPACK",
+        gateway: 'PAYPACK',
       };
     } catch (error) {
       response = {
         success: false,
         message: error.message,
-        gateway: "PAYPACK",
+        gateway: 'PAYPACK',
       };
     }
-  } 
-  else if (paymentGateway.toLowerCase() === "simple") {
+  } else if (paymentGateway.toLowerCase() === 'simple') {
     // Simple payment status check (from database)
     const payment = await prisma.payment.findUnique({
       where: { reference },
@@ -229,27 +207,26 @@ export const checkPaymentStatus = async (reference, paymentGateway = "simple") =
           method: payment.method,
           createdAt: payment.createdAt,
         },
-        gateway: "SIMPLE",
+        gateway: 'SIMPLE',
       };
     } else {
       response = {
         success: false,
-        message: "Payment not found",
-        gateway: "SIMPLE",
+        message: 'Payment not found',
+        gateway: 'SIMPLE',
       };
     }
   } else {
-    throw new Error("Invalid payment gateway. Must be paypack or simple");
+    throw new Error('Invalid payment gateway. Must be paypack or simple');
   }
 
   return response;
 };
 
-
 export const getUserPaymentHistory = async (userId, userType, offset = 0, limit = 10) => {
   let trips = [];
 
-  if (userType === "CUSTOMER") {
+  if (userType === 'CUSTOMER') {
     trips = await prisma.trip.findMany({
       where: {
         customerId: userId,
@@ -257,7 +234,7 @@ export const getUserPaymentHistory = async (userId, userType, offset = 0, limit 
       },
       skip: Number(offset),
       take: Number(limit),
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
       include: {
         rideComplete: true,
         driver: {
@@ -271,8 +248,7 @@ export const getUserPaymentHistory = async (userId, userType, offset = 0, limit 
         refunds: true,
       },
     });
-  } 
-  else if (userType === "DRIVER") {
+  } else if (userType === 'DRIVER') {
     trips = await prisma.trip.findMany({
       where: {
         driverId: userId,
@@ -280,7 +256,7 @@ export const getUserPaymentHistory = async (userId, userType, offset = 0, limit 
       },
       skip: Number(offset),
       take: Number(limit),
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
       include: {
         rideComplete: true,
         customer: {
@@ -297,7 +273,7 @@ export const getUserPaymentHistory = async (userId, userType, offset = 0, limit 
   }
 
   // Format response with payment details
-  const paymentHistory = trips.map(trip => ({
+  const paymentHistory = trips.map((trip) => ({
     tripId: trip.id,
     amount: trip.payments?.[0]?.amount || trip.estimatedPrice,
     status: trip.paymentStatus,
@@ -313,7 +289,6 @@ export const getUserPaymentHistory = async (userId, userType, offset = 0, limit 
   return paymentHistory;
 };
 
-
 export const processRefund = async (customerId, amount, phoneNumber, tripId, reason) => {
   // Verify trip exists and belongs to customer
   const trip = await prisma.trip.findUnique({
@@ -328,19 +303,18 @@ export const processRefund = async (customerId, amount, phoneNumber, tripId, rea
   });
 
   if (!trip) {
-    throw new Error("Trip not found or does not belong to this customer");
+    throw new Error('Trip not found or does not belong to this customer');
   }
 
-  
-  if (trip.status === "COMPLETED" && trip.rideComplete) {
-    throw new Error("Completed trips are not eligible for refund");
+  if (trip.status === 'COMPLETED' && trip.rideComplete) {
+    throw new Error('Completed trips are not eligible for refund');
   }
 
   let refundResponse;
 
-  if (trip.paymentGateway === "PAYPACK") {
-    if (!phoneNumber || !phoneNumber.startsWith("07")) {
-      throw new Error("Valid MTN mobile money number (07XXXXXXXX) required for PayPack refunds");
+  if (trip.paymentGateway === 'PAYPACK') {
+    if (!phoneNumber || !phoneNumber.startsWith('07')) {
+      throw new Error('Valid MTN mobile money number (07XXXXXXXX) required for PayPack refunds');
     }
     refundResponse = await processPaypackRefund(amount, phoneNumber);
 
@@ -350,7 +324,7 @@ export const processRefund = async (customerId, amount, phoneNumber, tripId, rea
         data: {
           reference: refundResponse.data.ref,
           amount,
-          reason: reason || "Customer requested refund",
+          reason: reason || 'Customer requested refund',
           status: refundResponse.data.status.toUpperCase(),
           tripId,
           customerId,
@@ -361,28 +335,27 @@ export const processRefund = async (customerId, amount, phoneNumber, tripId, rea
       await prisma.trip.update({
         where: { id: tripId },
         data: {
-          status: "CANCELED",
-          paymentStatus: "REFUNDED",
+          status: 'CANCELED',
+          paymentStatus: 'REFUNDED',
         },
       });
 
       // Update wallet if refund succeeded immediately
-      if (refundResponse.data.status === "successful") {
+      if (refundResponse.data.status === 'successful') {
         await updateWalletBalance(customerId, amount);
-        
+
         // Create refund notification
         await prisma.notification.create({
           data: {
             customerId,
-            title: "Refund Processed",
+            title: 'Refund Processed',
             message: `Your refund of ${amount} RWF for trip ${tripId} was processed.`,
             isRead: false,
           },
         });
       }
     }
-  } 
-  else if (trip.paymentGateway === "SIMPLE") {
+  } else if (trip.paymentGateway === 'SIMPLE') {
     const refundReference = `REF-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
     // Create refund record
@@ -390,8 +363,8 @@ export const processRefund = async (customerId, amount, phoneNumber, tripId, rea
       data: {
         reference: refundReference,
         amount,
-        reason: reason || "Customer requested refund",
-        status: "SUCCESS",
+        reason: reason || 'Customer requested refund',
+        status: 'SUCCESS',
         tripId,
         customerId,
       },
@@ -401,15 +374,15 @@ export const processRefund = async (customerId, amount, phoneNumber, tripId, rea
     await prisma.trip.update({
       where: { id: tripId },
       data: {
-        status: "CANCELED",
-        paymentStatus: "REFUNDED",
+        status: 'CANCELED',
+        paymentStatus: 'REFUNDED',
       },
     });
     await updateWalletBalance(customerId, amount);
     await prisma.notification.create({
       data: {
         customerId,
-        title: "Refund Processed",
+        title: 'Refund Processed',
         message: `Your refund of ${amount} RWF for trip ${tripId} was processed.`,
         isRead: false,
       },
@@ -418,7 +391,7 @@ export const processRefund = async (customerId, amount, phoneNumber, tripId, rea
       await prisma.notification.create({
         data: {
           driverId: trip.driverId,
-          title: "Payment Refunded",
+          title: 'Payment Refunded',
           message: `Payment of ${amount} RWF for trip ${tripId} was refunded to customer.`,
           isRead: false,
         },
@@ -430,12 +403,12 @@ export const processRefund = async (customerId, amount, phoneNumber, tripId, rea
       data: {
         refundReference,
         amount,
-        status: "SUCCESS",
+        status: 'SUCCESS',
         createdAt: refund.createdAt,
       },
     };
   } else {
-    throw new Error("Unknown payment gateway for this trip");
+    throw new Error('Unknown payment gateway for this trip');
   }
 
   return refundResponse;
@@ -459,8 +432,8 @@ async function updateWalletBalance(customerId, amount) {
   }
 }
 async function createPaymentNotification(customerId, driverId, tripId, amount, isSuccess) {
-  const status = isSuccess ? "successful" : "failed";
-  const message = isSuccess 
+  const status = isSuccess ? 'successful' : 'failed';
+  const message = isSuccess
     ? `Your payment of ${amount} RWF for trip ${tripId} was successful.`
     : `Your payment of ${amount} RWF for trip ${tripId} failed.`;
 
@@ -477,7 +450,7 @@ async function createPaymentNotification(customerId, driverId, tripId, amount, i
     await prisma.notification.create({
       data: {
         driverId,
-        title: "Payment Received",
+        title: 'Payment Received',
         message: `Payment of ${amount} RWF for trip ${tripId} was received.`,
         isRead: false,
       },
@@ -506,7 +479,7 @@ export const exportUserPaymentHistory = async (userId, userType) => {
     ];
 
     // Add data rows
-    payments.forEach(payment => {
+    payments.forEach((payment) => {
       worksheet.addRow({
         date: payment.createdAt,
         amount: payment.amount,
@@ -519,7 +492,7 @@ export const exportUserPaymentHistory = async (userId, userType) => {
     });
 
     // Style header row
-    worksheet.getRow(1).eachCell(cell => {
+    worksheet.getRow(1).eachCell((cell) => {
       cell.font = { bold: true };
     });
 
@@ -537,11 +510,11 @@ export const verifyPaymentWebhook = async (payload) => {
   try {
     // Verify PayPack webhook signature if needed
     // Add your verification logic here
-    
+
     // Example for PayPack webhook verification
     if (payload.event === 'transaction:processed') {
       const transaction = payload.data;
-      
+
       // Update payment status in database
       await prisma.payment.updateMany({
         where: { reference: transaction.ref },
@@ -557,4 +530,3 @@ export const verifyPaymentWebhook = async (payload) => {
     throw error;
   }
 };
-

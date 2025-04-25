@@ -1,47 +1,34 @@
-@baseUrl = https://easy-ride-backend-xl8m.onrender.com/api
-@customerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjhlYWUxNWUwLTNjZGUtNDkxMC05NGM4LTUwYWYwMmYzNmRkOSIsInVzZXJUeXBlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3NDA3NDE1NzAsImV4cCI6MTc0MzMzMzU3MH0.SJwDQAQD79IfTc35d4vxGXnV8i-QI1L1bRq2VHUhfEw
+@baseUrl = http://localhost:3000/api
 
-@driverToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImFmYjBmMDY1LWIwYTktNDliZC05NjM4LWYzMTJkNzQ2OGQxNSIsInVzZXJUeXBlIjoiRFJJVkVSIiwiaWF0IjoxNzQwNzQxNjE0LCJleHAiOjE3NDMzMzM2MTR9.ppCV1Ins0zrODyGCd8T0oSsH2K9S4woETgS56X-8DPM
+@customerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijk3ZGIzMzNlLTlmZTktNGNhOS1iNjEzLTM4YjY3Mzk4ZjBhMCIsInVzZXJUeXBlIjoiQ1VTVE9NRVIiLCJpYXQiOjE3NDU1NjY2NjAsImV4cCI6MTc0ODE1ODY2MH0.I1DHSBv3M1_1jgHqSJCyQudAS65b53P1gg47gMHt64E
 
-@customerId = 8eae15e0-3cde-4910-94c8-50af02f36dd9
+@driverToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImM0YzJhZjMzLWRkZTktNDU2Ni04N2JiLWE0OTYyN2Q1OWY0ZiIsInVzZXJUeXBlIjoiRFJJVkVSIiwiaWF0IjoxNzQ1NTY2NzA5LCJleHAiOjE3NDgxNTg3MDl9.4TGKOZy-8KjdJz6KjW0ZgExeLZ0CJmJdd8J-bannaF4
 
-@driverId = afb0f065-b0a9-49bd-9638-f312d7468d15
+@customerId = 97db333e-9fe9-4ca9-b613-38b67398f0a0
 
-@vehicleId = f9e7fb4b-1028-4a35-9b0b-06bb3b94124d
-
-@rideId = e1127483-ce1b-452e-ad9c-e4f09c30433a
-
-@tripId = 924fa96c-503c-4e11-a111-a6fff19ced89
-
-@previousRideId = 82c96a16-054e-4915-8c48-28b721bc63d9
+@driverId = c4c2af33-dde9-4566-87bb-a49627d59f4f
 
 ### User Routes ###
 
-### Get Customer Profile
+### 1. Get Customer Profile
 GET {{baseUrl}}/users/{{customerId}}
 Authorization: Bearer {{customerToken}}
 
-###
-
-### Get Driver Profile
+### 2. Get Driver Profile
 GET {{baseUrl}}/users/{{driverId}}
 Authorization: Bearer {{driverToken}}
 
-###
-
-### Update Customer Profile
+### 3. Update Customer Profile
 PUT {{baseUrl}}/users/{{customerId}}
 Authorization: Bearer {{customerToken}}
 Content-Type: application/json
 
 {
-    "name": "Updated Name",
-    "phone": "+1987654321"
+    "name": "Updated Customer Name",
+    "phone": "+1234567890"
 }
 
-###
-
-### Update Driver Profile
+### 4. Update Driver Profile
 PUT {{baseUrl}}/users/{{driverId}}
 Authorization: Bearer {{driverToken}}
 Content-Type: application/json
@@ -49,18 +36,35 @@ Content-Type: application/json
 {
     "name": "Updated Driver Name",
     "phone": "+1987654321",
-    "licenseNumber": "DL654321"
+    "licenseNumber": "DL654321",
+    "isAvailable": true,
+    "currentLocation": {
+        "lat": 12.3456,
+        "lng": 78.9012
+    }
 }
 
-###
-
-### Delete Customer Account
+### 5. Delete Customer Account
 DELETE {{baseUrl}}/users/{{customerId}}
 Authorization: Bearer {{customerToken}}
 
-###
-
-### Delete Driver Account
+### 6. Delete Driver Account
 DELETE {{baseUrl}}/users/{{driverId}}
 Authorization: Bearer {{driverToken}}
 
+### 7. Trying to get non-existent user (should return 404)
+GET {{baseUrl}}/users/non-existent-id
+Authorization: Bearer {{customerToken}}
+
+### 8. Trying to update with invalid data (should return 400)
+PUT {{baseUrl}}/users/{{customerId}}
+Authorization: Bearer {{customerToken}}
+Content-Type: application/json
+
+{
+    "phone": "invalid-phone-number"
+}
+
+### 9. Trying to delete already deleted account (should return 404)
+DELETE {{baseUrl}}/users/{{customerId}}
+Authorization: Bearer {{customerToken}}

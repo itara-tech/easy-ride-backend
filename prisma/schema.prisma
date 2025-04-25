@@ -54,6 +54,7 @@ model Driver {
   chatrooms       ChatRoom[]
   wallet          Wallet?
   messages        Message[]
+  isAdmin Boolean? @default(false)
 }
 
 model Vehicle {

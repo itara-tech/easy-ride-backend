@@ -1,17 +1,19 @@
 import prisma from '../configs/database.js';
 
 export const createNotification = async (userId, title, message) => {
-  const user = await prisma.customer.findUnique({
-    where: { id: userId },
-  }) || await prisma.driver.findUnique({
-    where: { id: userId },
-  });
+  const user =
+    (await prisma.customer.findUnique({
+      where: { id: userId },
+    })) ||
+    (await prisma.driver.findUnique({
+      where: { id: userId },
+    }));
 
   if (!user) {
     console.error(`User with ID ${userId} not found in database.`);
     throw new Error('User not found');
   }
-  console.log(user)
+  console.log(user);
   // Check if the user is a Customer or a Driver
   const customer = await prisma.customer.findUnique({ where: { id: userId } });
   const driver = await prisma.driver.findUnique({ where: { id: userId } });

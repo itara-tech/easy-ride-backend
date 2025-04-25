@@ -40,7 +40,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/chat', chatRoutes);
-app.use("/api/payment", paymentRoutes)
+app.use('/api/payment', paymentRoutes);
 app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/rides', rideRoutes);
 
@@ -59,11 +59,11 @@ prisma
 
 initPaypack().then((success) => {
   if (success) {
-    console.log("PayPack initialized successfully")
+    console.log('PayPack initialized successfully');
   } else {
-    console.error("Failed to initialize PayPack")
+    console.error('Failed to initialize PayPack');
   }
-})
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

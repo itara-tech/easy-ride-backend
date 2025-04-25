@@ -12,7 +12,7 @@ export const createChatRoom = async (req, res) => {
   try {
     // Check if chat room already exists
     const existingRoom = await prisma.chatRoom.findUnique({
-      where: { rideRequestId }
+      where: { rideRequestId },
     });
 
     if (existingRoom) {

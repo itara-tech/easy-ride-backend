@@ -1,36 +1,64 @@
 import * as adminService from '../services/adminService.js';
 
 export const getAllUsers = async (req, res) => {
-  const { userType, page, limit } = req.query;
   try {
-    const users = await adminService.getAllUsers(userType, Number.parseInt(page), Number.parseInt(limit));
-    res.json(users);
+    const [customers, drivers] = await Promise.all([
+      prisma.customer.findMany(),
+      prisma.driver.findMany()
+    ]);
+    res.json([...customers, ...drivers]);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
 export const getUserById = async (req, res) => {
-  const { userType, userId } = req.params;
   try {
-    const user = await adminService.getUserById(userType, userId);
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
+    const { userId } = req.params;
+    const user = await adminService.getUserById(userId);
     res.json(user);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(404).json({ 
+      error: error.message,
+      details: 'User not found' 
+    });
   }
 };
 
 export const updateUserStatus = async (req, res) => {
-  const { userType, userId } = req.params;
-  const { isVerified } = req.body;
   try {
-    const updatedUser = await adminService.updateUserStatus(userType, userId, isVerified);
+    const { userId } = req.params;
+    const { isVerified } = req.body;
+    
+    if (typeof isVerified !== 'boolean') {
+      return res.status(400).json({ error: 'Invalid verification status' });
+    }
+
+    const updatedUser = await adminService.updateUserStatus(userId, isVerified);
     res.json(updatedUser);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(400).json({ 
+      error: error.message,
+      details: 'Failed to update user status' 
+    });
+  }
+};
+
+export const promoteToAdmin = async (req, res) => {
+  try {
+    const { email } = req.body;
+    
+    if (!email || typeof email !== 'string') {
+      return res.status(400).json({ error: 'Valid email is required' });
+    }
+
+    const result = await adminService.promoteToAdmin(email);
+    res.json(result);
+  } catch (error) {
+    res.status(400).json({ 
+      error: error.message,
+      details: 'Failed to promote user to admin' 
+    });
   }
 };
 
@@ -39,6 +67,9 @@ export const getSystemStats = async (req, res) => {
     const stats = await adminService.getSystemStats();
     res.json(stats);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ 
+      error: error.message,
+      details: 'Failed to fetch system stats' 
+    });
   }
 };
